@@ -40,9 +40,9 @@ function swt_image = swtransform(image)
     for idx = 1:length(xindices)
         current_point = [xindices(idx), yindices(idx)];
         % Get the gradient at this point
-        angle = imgrad(xindices(idx), yindices(idx));
+        angle = imgrad(yindices(idx), xindices(idx));
         % Construct a ray on which we will traverse to find the "opposite"
-        % pixel. Limit ourselves to at most 100 pixels.
+        % pixel. Limit ourselves to at most maxStrokeWidth pixels.
         %disp(angle)
         [ray_x, ray_y] = bresenhamLine(current_point, angle, maxStrokeWidth);
         
@@ -60,7 +60,7 @@ function swt_image = swtransform(image)
         ray_edge_idx = ray_idx(imedge(ray_idx) == 1);
         
         % Get the X and Y indices.
-        [x, y] = ind2sub(size(imgray), ray_edge_idx);
+        [y, x] = ind2sub(size(imgray), ray_edge_idx);
         
         % Find the nearest edge pixel
         [~, nearest_idx] = min(hypot(x-current_point(1), y-current_point(2)));
@@ -68,14 +68,14 @@ function swt_image = swtransform(image)
         ynear = y(nearest_idx);
         
         % We are only tolerant of 30 degrees error.
-        if abs(angle + imgrad(xnear, ynear)) < pi/6
+        if abs(angle + imgrad(ynear, xnear)) < pi/6
             % SWT value is the distance between the two points.
             swt_value = hypot(current_point(1) - xnear, current_point(2) - ynear);
             [ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
-            ray_mod_idx = sub2ind(size(imgray), ray_mod_x, ray_mod_y);
+            ray_mod_idx = sub2ind(size(imgray), ray_mod_y, ray_mod_x);
             % Assign the SWT value only if it is less than the current swt
             % value.
-            swt_image(swt_image(ray_mod_idx) < swt_value) = swt_value;
+            swt_image(swt_image(ray_mod_idx) > swt_value) = swt_value;
         end
     end
     swt_image(swt_image == inf) = 0;
