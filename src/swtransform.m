@@ -72,10 +72,10 @@ function swt_image = swtransform(image)
             % SWT value is the distance between the two points.
             swt_value = hypot(current_point(1) - xnear, current_point(2) - ynear);
             [ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
-            ray_mod_idx = sub2ind(size(imgray), ray_mod_y, ray_mod_x);
+            ray_mod_idx = sub2ind(size(imgray), ray_mod_y(1, :), ray_mod_x(1, :));
             % Assign the SWT value only if it is less than the current swt
             % value.
-            swt_image(swt_image(ray_mod_idx) > swt_value) = swt_value;
+            swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
         end
     end
     swt_image(swt_image == inf) = 0;
