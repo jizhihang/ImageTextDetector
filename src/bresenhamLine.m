@@ -5,7 +5,7 @@ function [x_indices, y_indices] = bresenhamLine(starting_point, angle, max_dist)
     % Usage: [xPts yPts] = bresenhamLine(startingPoint, angleRadian, halfSegmentWidth)
     %
     % startPoint = [x y] co-orinates of the point around which a line segment is to be constructed
-    % angleRadian = The direction of exploration in radians
+    % angleRadian = The direction of exploration in radians [-pi, pi]
     % halfSegmentWidth = Exploration width on either sides of starting point with starting point as center
     %
     % Outputs the x and y co-ordinates starting from center to each extremes on single row i.e.
@@ -23,7 +23,13 @@ function [x_indices, y_indices] = bresenhamLine(starting_point, angle, max_dist)
     if slope < 1
         % Unique x indices.
         %Generating the line with start point as origin and later shifting the entire segment
-        x_indices = 0:1:round(cos(angle)*max_dist);
+        x_extreme = round(cos(angle) * max_dist);
+        if(x_extreme > 0)
+            x_indices = 0:1:round(cos(angle)*max_dist);
+        else
+            x_indices = 0:-1:round(cos(angle)*max_dist);
+        end
+            
         %x_indices = starting_point(1):1:round(cos(angle)*max_dist);
         
         % Line equation: (y-y1) = m*(x-x1) => y = y1 + m*(x-x1)
@@ -36,7 +42,12 @@ function [x_indices, y_indices] = bresenhamLine(starting_point, angle, max_dist)
     else
         % Unique y indices.
         %Generating the line with start point as origin and later shifting the entire segment
-        y_indices = 0:1:round(sin(angle)*max_dist);
+        y_extreme = round(sin(angle) * max_dist);
+        if(y_extreme > 0)
+            y_indices = 0:1:round(sin(angle)*max_dist);
+        else
+            y_indices = 0:-1:round(sin(angle)*max_dist);
+        end
         %y_indices = starting_point(2):1:round(sin(angle)*max_dist);
         
         % Line equation: (y-y1) = m*(x-x1) => x = x1 + (1/m)*(y-y1)

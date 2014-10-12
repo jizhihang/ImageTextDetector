@@ -4,6 +4,12 @@ function swt_image = swtransform(image)
     % stationary wavelet coefficients. The idea behind this code can  be
     % found at 
     %     http://www.math.tau.ac.il/~turkel/imagepapers/text_detection.pdf
+    %
+    % Usage : swtImage = swtransform(image)
+    % image = RGB image on which Stroke Width Transformation is to be applied
+    %
+    % Output:
+    % swtImage = Matrix, with same dimensions as images, with estimated stroke width at each point
     
     % Get the gray scale image
     imgray = rgb2gray(image);
@@ -19,22 +25,36 @@ function swt_image = swtransform(image)
     
     % We need gradient values at edge pixels only. Mask other values out.
     imgrad = imgrad.*imedge;
+
+    %Debugging
+    %figure; imagesc(imgrad)
+    %figure; imagesc(imedge)
+    %return;
     
     % Get the indices where edges exist
-    [xindices, yindices] = find(imedge == 1);
+    % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
+    [yindices xindices] = find(imedge == 1);
     
+    maxStrokeWidth = 20;
     % First pass. Iterate through all edge pixels.
-    for idx = length(xindices)
+    for idx = 1:length(xindices)
         current_point = [xindices(idx), yindices(idx)];
         % Get the gradient at this point
         angle = imgrad(xindices(idx), yindices(idx));
         % Construct a ray on which we will traverse to find the "opposite"
         % pixel. Limit ourselves to at most 100 pixels.
-        disp(angle)
-        [ray_x, ray_y] = bresenhamLine(current_point, angle, 100);
+        %disp(angle)
+        [ray_x, ray_y] = bresenhamLine(current_point, angle, maxStrokeWidth);
         
+        %Checking the extremes for the image boundary overshoots
+        ray_x = bsxfun(@max, ray_x, 0);
+        ray_x = bsxfun(@min, ray_x, size(image, 2));
+        ray_y = bsxfun(@max, ray_y, 0);
+        ray_y = bsxfun(@min, ray_y, size(image, 1));
+
         % Get the equivalent linear indices.
-        ray_idx = sub2ind(size(imgray), ray_x, ray_y);
+        % Traversing in one direction (positive gradient for now)
+        ray_idx = sub2ind(size(imgray), ray_y(1, :), ray_x(1, :));
         
         % Find the ray indices which are on the edge.
         ray_edge_idx = ray_idx(imedge(ray_idx) == 1);
