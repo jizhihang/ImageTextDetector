@@ -47,11 +47,11 @@ function swt_image = swtransform(image)
         [ray_x, ray_y] = bresenhamLine(current_point, angle, maxStrokeWidth);
         
         %Checking the extremes for the image boundary overshoots
-        ray_x = bsxfun(@max, ray_x, 0);
+        ray_x = bsxfun(@max, ray_x(:, 2:end), 1);
         ray_x = bsxfun(@min, ray_x, size(image, 2));
-        ray_y = bsxfun(@max, ray_y, 0);
+        ray_y = bsxfun(@max, ray_y(:, 2:end), 1);
         ray_y = bsxfun(@min, ray_y, size(image, 1));
-
+        
         % Get the equivalent linear indices.
         % Traversing in one direction (positive gradient for now)
         ray_idx = sub2ind(size(imgray), ray_y(1, :), ray_x(1, :));
