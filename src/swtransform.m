@@ -22,7 +22,8 @@ function swt_image = swtransform(image)
     % edge does not return the gradient map. So get one.
     [gx gy] = gradient(double(imgray));
     imgrad = atan2(gy, gx);
-    
+    %imMag = (gx.^2 + gy.^2) .^ 0.5;
+
     % We need gradient values at edge pixels only. Mask other values out.
     imgrad = imgrad.*imedge;
 
@@ -35,7 +36,7 @@ function swt_image = swtransform(image)
     % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
     [yindices xindices] = find(imedge == 1);
     
-    maxStrokeWidth = 20;
+    maxStrokeWidth = 300;
     % First pass. Iterate through all edge pixels.
     for idx = 1:length(xindices)
         current_point = [xindices(idx), yindices(idx)];
@@ -78,5 +79,5 @@ function swt_image = swtransform(image)
             swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
         end
     end
-    swt_image(swt_image == inf) = 0;
+    swt_image(swt_image == inf) = max(swt_image(:));
 end
