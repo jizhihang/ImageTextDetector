@@ -20,8 +20,11 @@ function swt_image = swtransform(image)
     imedge = edge(imgray, 'canny'); % Let it choose the thresholds as of now.
    
     % edge does not return the gradient map. So get one.
-    [gx gy] = gradient(double(imgray));
-    imgrad = atan2(gy, gx);
+    %[gx gy] = gradient(double(imgray));
+    [gx, gy] = derivative5(double(imgray), 'x', 'y');
+    %[~, imgrad] = imgradient(double(imgray));
+    imgrad =  atan2(gy, gx);
+    %figure; imagesc(imGrad);
     %imMag = (gx.^2 + gy.^2) .^ 0.5;
 
     % We need gradient values at edge pixels only. Mask other values out.
@@ -36,16 +39,19 @@ function swt_image = swtransform(image)
     % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
     [yindices xindices] = find(imedge == 1);
     
-    maxStrokeWidth = 300;
+    maxStrokeWidth =20;
     % First pass. Iterate through all edge pixels.
+    mask = zeros(size(imedge));
     for idx = 1:length(xindices)
         current_point = [xindices(idx), yindices(idx)];
         % Get the gradient at this point
         angle = imgrad(yindices(idx), xindices(idx));
+        %if(abs(angle) < 
         % Construct a ray on which we will traverse to find the "opposite"
         % pixel. Limit ourselves to at most maxStrokeWidth pixels.
         %disp(angle)
         [ray_x, ray_y] = bresenhamLine(current_point, angle, maxStrokeWidth);
+        mask(current_point(2), current_point(1)) = angle;
         
         %Checking the extremes for the image boundary overshoots
         ray_x = bsxfun(@max, ray_x(:, 2:end), 1);
@@ -53,6 +59,9 @@ function swt_image = swtransform(image)
         ray_y = bsxfun(@max, ray_y(:, 2:end), 1);
         ray_y = bsxfun(@min, ray_y, size(image, 1));
         
+        mask(sub2ind(size(imgrad), ray_y(1, :) , ray_x(1,:))) = 1;
+        %mask(sub2ind(size(imgrad), ray_y(2, :) , ray_x(2,:))) = 2;
+        continue;
         % Get the equivalent linear indices.
         % Traversing in one direction (positive gradient for now)
         ray_idx = sub2ind(size(imgray), ray_y(1, :), ray_x(1, :));
@@ -69,7 +78,8 @@ function swt_image = swtransform(image)
         ynear = y(nearest_idx);
         
         % We are only tolerant of 30 degrees error.
-        if abs(angle + imgrad(ynear, xnear)) < pi/6
+        %if 1
+        if abs(angle + imgrad(ynear, xnear)) < pi/3
             % SWT value is the distance between the two points.
             swt_value = hypot(current_point(1) - xnear, current_point(2) - ynear);
             [ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
@@ -79,5 +89,7 @@ function swt_image = swtransform(image)
             swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
         end
     end
-    swt_image(swt_image == inf) = max(swt_image(:));
+    figure; imagesc(mask)
+    swt_image(swt_image == inf) = maxStrokeWidth;
+    %swt_image(swt_image == inf) = max(swt_image(:));
 end

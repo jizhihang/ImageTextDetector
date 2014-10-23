@@ -20,7 +20,7 @@ function [x_indices, y_indices] = bresenhamLine(starting_point, angle, max_dist)
     % is unique. If slope is greater than 1, every y coordinate is unique.
     
     % Construct on one side. Mirror it to get the two sided ray.
-    if slope < 1
+    if abs(slope) < 1
         % Unique x indices.
         %Generating the line with start point as origin and later shifting the entire segment
         x_extreme = round(cos(angle) * max_dist);
