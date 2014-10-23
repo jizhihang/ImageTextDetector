@@ -1,6 +1,7 @@
 %Local script to read images from ../images/rectangles/* and dump their swt transforms
 
 %Adding the path
+addpath('../src/');
 basePath = '../images/rectangles';
 %imgList = dir(fullfile(basePath, '*.png'));
 
@@ -25,6 +26,6 @@ for i = 1:noImgs
     %Writing the image side by side
     %imshow([image(:, :, [1 1 1]), rgbMap]);
     %fullfile(basePath, strrep(imgList(i).name, '.png', '_swt.png'))
-    imwrite(rgbMap, fullfile(basePath, sprintf('%02d_swt.png', i)), 'png');
+    imwrite([image(:, :, [1 1 1]) rgbMap], fullfile(basePath, sprintf('%02d_swt.png', i)), 'png');
 end
 
