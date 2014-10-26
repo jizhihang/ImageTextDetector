@@ -31,22 +31,22 @@ function swt_image = swtransform(image)
     %imgrad = imgrad.*imedge;
 
     %Debugging
-    %figure; imagesc(imgrad)
+    %figure; imagesc(imgrad);
+    %fprintf('Minimum, maximum = (%f, %f)\n', min(imgrad(:)), max(imgrad(:)));
     %figure; imagesc(imedge)
     %return;
     
     % Get the indices where edges exist
     % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
-    [yindices xindices] = find(imedge == 1);
+    [yindices, xindices] = find(imedge == 1);
     
-    maxStrokeWidth =20;
+    maxStrokeWidth =300;
     % First pass. Iterate through all edge pixels.
     mask = zeros(size(imedge));
     for idx = 1:length(xindices)
         current_point = [xindices(idx), yindices(idx)];
         % Get the gradient at this point
         angle = imgrad(yindices(idx), xindices(idx));
-        %if(abs(angle) < 
         % Construct a ray on which we will traverse to find the "opposite"
         % pixel. Limit ourselves to at most maxStrokeWidth pixels.
         %disp(angle)
@@ -61,7 +61,6 @@ function swt_image = swtransform(image)
         
         mask(sub2ind(size(imgrad), ray_y(1, :) , ray_x(1,:))) = 1;
         %mask(sub2ind(size(imgrad), ray_y(2, :) , ray_x(2,:))) = 2;
-        continue;
         % Get the equivalent linear indices.
         % Traversing in one direction (positive gradient for now)
         ray_idx = sub2ind(size(imgray), ray_y(1, :), ray_x(1, :));
@@ -79,7 +78,8 @@ function swt_image = swtransform(image)
         
         % We are only tolerant of 30 degrees error.
         %if 1
-        if abs(angle + imgrad(ynear, xnear)) < pi/3
+        if abs(angle + imgrad(ynear, xnear)) < pi/6 | ...
+                abs(angle + (pi - imgrad(ynear, xnear))) < pi/6
             % SWT value is the distance between the two points.
             swt_value = hypot(current_point(1) - xnear, current_point(2) - ynear);
             [ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
@@ -89,7 +89,7 @@ function swt_image = swtransform(image)
             swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
         end
     end
-    figure; imagesc(mask)
-    swt_image(swt_image == inf) = maxStrokeWidth;
+    %figure; imagesc(mask)
+    swt_image(swt_image == inf) = hypot(size(swt_image, 1), size(swt_image, 2));
     %swt_image(swt_image == inf) = max(swt_image(:));
 end
