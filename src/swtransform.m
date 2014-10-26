@@ -25,7 +25,7 @@ function swt_image = swtransform(image)
     %imMag = (gx.^2 + gy.^2) .^ 0.5;
 
     % We need gradient values at edge pixels only. Mask other values out.
-    imgrad = imgrad.*imedge;
+    %imgrad = imgrad.*imedge;
 
     %Debugging
     %figure; imagesc(imgrad)
@@ -79,5 +79,5 @@ function swt_image = swtransform(image)
             swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
         end
     end
-    swt_image(swt_image == inf) = max(swt_image(:));
+    swt_image(swt_image == inf) = hypot(size(imgray,1), size(imgray,2));
 end
