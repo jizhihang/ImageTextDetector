@@ -6,5 +6,5 @@ signImg = imread('../images/signBoard.jpg');
 swtImg = swtransform(signImg);
 %swtImg = swtransform(image(:, :, [1 1 1]));
 figure; imagesc(swtImg);
-components = connectedComponents(swtImg, 3.2);
-figure; imagesc(components);
+%components = connectedComponents(swtImg, 3.2);
+%figure; imagesc(components);

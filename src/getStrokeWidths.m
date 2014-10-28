@@ -27,6 +27,11 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
         direction = 2;
     end
 
+    % Index of non-discarded rays - storing the (x, y) along with swt value obtained
+    % Size pre-assigned for speed; keeping track of no of rays becomes necessary
+    successRays = zeros(length(xindices), 3);
+    noRays = 0;
+
     % First pass. Iterate through all edge pixels.
     for idx = 1:length(xindices)
         current_point = [xindices(idx), yindices(idx)];
@@ -117,8 +122,32 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
             % Assign the SWT value only if it is less than the current swt
             % value.
             swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
+            
+            % Storing the successful / non-discarded ray
+            successRays(noRays + 1, :) = [current_point(1), current_point(2), swt_value];
+            noRays = noRays + 1;
         end
     end
+    
+    % Replacing infs with more- realistic value
     swt_image(swt_image == inf) = hypot(imSize(1), imSize(2));
+
+    % In order to handle corner pixels, we revisit the non-discarded rays and calculate the median
+    for rayId = 1:noRays
+        xInd = successRays(rayId, 1);
+        yInd = successRays(rayId, 2);
+        angle = imgrad(yInd, xInd);
+
+        % Generating the bresenhamLine for the given non-discarded ray
+        [ray_x, ray_y] = bresenhamLine([xInd, yInd], angle, swt_image(yInd, xInd));
+
+        % Getting the median and re-setting all the value to the median, if found greater
+        rayIndices = sub2ind(imSize, ray_y(direction, :), ray_x(direction, :));
+        medianWidth = median(swt_image(rayIndices));
+
+        % For all the points on the ray where swt value is greater than the median, replaec it with the median
+        swt_image(rayIndices(swt_image(rayIndices) > medianWidth)) = medianWidth;
+    end
+
     strokeWidthImg = swt_image;
 end
