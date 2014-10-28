@@ -1,4 +1,4 @@
-imgId = 9;
+imgId = 2;
 image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
