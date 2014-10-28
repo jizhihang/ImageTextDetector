@@ -31,8 +31,8 @@ function swt_image = swtransform(image)
     %imgrad = imgrad.*imedge;
 
     %Debugging
-    %figure; imagesc(imgrad);
-    %fprintf('Minimum, maximum = (%f, %f)\n', min(imgrad(:)), max(imgrad(:)));
+    figure; imagesc(imgrad);
+    fprintf('Minimum, maximum = (%f, %f)\n', min(imgrad(:)), max(imgrad(:)));
     %figure; imagesc(imedge)
     %return;
     
@@ -40,7 +40,7 @@ function swt_image = swtransform(image)
     % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
     [yindices, xindices] = find(imedge == 1);
     
-    maxStrokeWidth =300;
+    maxStrokeWidth =200;
     % First pass. Iterate through all edge pixels.
     mask = zeros(size(imedge));
     for idx = 1:length(xindices)
@@ -78,8 +78,8 @@ function swt_image = swtransform(image)
         
         % We are only tolerant of 30 degrees error.
         %if 1
-        if abs(angle + imgrad(ynear, xnear)) < pi/6 | ...
-                abs(angle + (pi - imgrad(ynear, xnear))) < pi/6
+        if abs(angle - (pi + imgrad(ynear, xnear))) < pi/3 | ...
+            abs(angle - (-pi + imgrad(ynear, xnear))) < pi/3
             % SWT value is the distance between the two points.
             swt_value = hypot(current_point(1) - xnear, current_point(2) - ynear);
             [ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
