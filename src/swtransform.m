@@ -23,7 +23,7 @@ function swt_image = swtransform(image)
 
     % We need gradient values at edge pixels only. Mask other values out.
     %imgrad = imgrad.*imedge;
-
+    
     % Computing the stroke widths along the positive direction of the gradient
     positive = true;
     swt_image = getStrokeWidths(imgrad, imedge, positive);
