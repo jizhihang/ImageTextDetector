@@ -17,7 +17,8 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
     [yindices, xindices] = find(imedge == 1);
    
     maxStrokeWidth = 200;
-    swt_image = inf(size(imgrad));
+    imSize = size(imgrad);
+    swt_image = inf(imSize);
 
     %Setting the direction
     if(positive)
@@ -35,22 +36,66 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
         % pixel. Limit ourselves to at most maxStrokeWidth pixels.
         %disp(angle)
         [ray_x, ray_y] = bresenhamLine(current_point, angle, maxStrokeWidth);
-        
+        % Removing the first entry that is the current itself
+        % Choosing the indices based on the direction to traverse
+        ray_x = ray_x(direction, 2:end);
+        ray_y = ray_y(direction, 2:end);
+
         %Checking the extremes for the image boundary overshoots
-        ray_x = bsxfun(@max, ray_x(direction, 2:end), 1);
-        ray_x = bsxfun(@min, ray_x, size(imgrad, 2));
-        ray_y = bsxfun(@max, ray_y(direction, 2:end), 1);
-        ray_y = bsxfun(@min, ray_y, size(imgrad, 1));
+        %ray_x = bsxfun(@max, ray_x, 1);
+        %ray_x = bsxfun(@min, ray_x, size(imgrad, 2));
+        %ray_y = bsxfun(@max, ray_y, 1);
+        %ray_y = bsxfun(@min, ray_y, size(imgrad, 1));
+
+        %Checking for extremes and trimming the ray accordingly
+        % Four possibilities for four sides of the image
+        rightExt = min(find(ray_x > imSize(2)));
+
+        % Right boundary is not violated, now check for left boundary
+        if(isempty(rightExt))
+            leftExt = min(find( ray_x < 1 ));
+            % Left boundary is violated
+            if(~isempty(leftExt))
+                xBound = leftExt;
+            else
+                xBound = length(ray_x) + 1;
+            end
+        else
+            xBound = rightExt;
+        end
+
+        bottomExt = min(find(ray_y > imSize(1)));
+        % Bottom boundary is not violated, now check for top boundary
+        if(isempty(bottomExt))
+            topExt = min(find( ray_y < 1 ));
+            % Top boundary is also not violated
+            if(~isempty(topExt))
+                yBound = topExt;
+            else
+                yBound = length(ray_y) + 1;
+            end
+        else
+            yBound = bottomExt;
+        end
+       
+        extremeInd = min(xBound, yBound);
+
+        %Debugging
+        %fprintf('Size : (%d %d) Bounds : (%d %d) => %d\n', length(ray_x), length(ray_y), xBound, yBound, extremeInd);
+
+        %Trimming the ray_y and ray_x accordingly
+        ray_y = ray_y(1:extremeInd-1);
+        ray_x = ray_x(1:extremeInd-1);
         
         % Get the equivalent linear indices.
         % Traversing in one direction (positive gradient for now)
-        ray_idx = sub2ind(size(imgrad), ray_y, ray_x);
+        ray_idx = sub2ind(imSize, ray_y, ray_x);
         
         % Find the ray indices which are on the edge.
         ray_edge_idx = ray_idx(imedge(ray_idx) == 1);
         
         % Get the X and Y indices.
-        [y, x] = ind2sub(size(imgrad), ray_edge_idx);
+        [y, x] = ind2sub(imSize, ray_edge_idx);
         
         % Find the nearest edge pixel
         [~, nearest_idx] = min(hypot(x-current_point(1), y-current_point(2)));
@@ -66,18 +111,14 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
 
             % Obtaining the trimmed ray, according to the swt width
             %Using bresenhamLine again, trying to re-use the already calculated value instead
-            %[ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
-            ray_mod_x = ray_x(1:floor(swt_value));
-            ray_mod_y = ray_y(1:floor(swt_value));
-
-            ray_mod_idx = sub2ind(size(imgrad), ray_mod_y, ray_mod_x);
+            [ray_mod_x, ray_mod_y] = bresenhamLine(current_point, angle, swt_value);
+            
+            ray_mod_idx = sub2ind(imSize, ray_mod_y(direction, :), ray_mod_x(direction, :));
             % Assign the SWT value only if it is less than the current swt
             % value.
             swt_image(ray_mod_idx(swt_image(ray_mod_idx) > swt_value)) = swt_value;
         end
     end
-    swt_image(swt_image == inf) = hypot(size(swt_image, 1), size(swt_image, 2));
+    swt_image(swt_image == inf) = hypot(imSize(1), imSize(2));
     strokeWidthImg = swt_image;
 end
-
-
