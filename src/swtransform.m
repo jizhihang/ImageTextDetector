@@ -31,8 +31,8 @@ function swt_image = swtransform(image)
     %imgrad = imgrad.*imedge;
 
     %Debugging
-    figure; imagesc(imgrad);
-    fprintf('Minimum, maximum = (%f, %f)\n', min(imgrad(:)), max(imgrad(:)));
+    %figure; imagesc(imgrad);
+    %fprintf('Minimum, maximum = (%f, %f)\n', min(imgrad(:)), max(imgrad(:)));
     %figure; imagesc(imedge)
     %return;
     
