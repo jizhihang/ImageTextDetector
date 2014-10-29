@@ -36,7 +36,7 @@ function components = connectedComponents(swtimage, nbr_ratio)
     while true
         % Check if we have an empty valid_nbr_x. If so, increment the
         % component count and start with a fresh pixel.
-        fprintf('Component: %d; Iteration: %d\n', current_component, iter);
+        %fprintf('Component: %d; Iteration: %d\n', current_component, iter);
         iter = iter + 1;
         if isempty(valid_nbr_x)
             [xnew, ynew] = find(visited_pixels == 0);
