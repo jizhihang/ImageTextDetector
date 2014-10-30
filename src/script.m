@@ -6,12 +6,13 @@ signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
 %signImg = imread('../images/signBoard.jpg');
 swtImg = swtransform(signImg);
 %swtImg = swtransform(image(:, :, [1 1 1]));
+
 %figure; imagesc(swtImg);
 components = connectedComponents(swtImg, 3.2);
-figure; imagesc(components);
-components = filterComponents(swtImg, components);
-
-figure; imagesc(components)
+%figure; imagesc(components);
+[components, bboxes] = filterComponents(swtImg, components);
+%figure; imagesc(components)
+groupedComponents = groupLetters(signImg, swtImg, components, bboxes);
 
 return
 % Viewing each component seperately 

@@ -1,4 +1,4 @@
-function[textComponents] = filterComponents(strokeWidthImg, components)
+function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, components)
     % This function performs some fairly flexible tests based on some fairly general rules 
     % on connected components of swt image. 
     %
@@ -11,7 +11,7 @@ function[textComponents] = filterComponents(strokeWidthImg, components)
     %
     % Output:
     % textComponents - Components that most likely correspond to text regions
-    %
+    % componentBBoxes - Bounding boxes containing the components
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Set of parameters that can be tuned for better performance
@@ -42,7 +42,7 @@ function[textComponents] = filterComponents(strokeWidthImg, components)
         % Ignoring this part, check NOTE below
         % Discard if the variance is too large
         if(varWidth > varianceMeanRatio * meanWidth)
-            continue;
+            %continue;
         end
 
         % Extract the bounding box
@@ -76,8 +76,8 @@ function[textComponents] = filterComponents(strokeWidthImg, components)
         %figure(2); imagesc(strokeWidthImg.*mask);
         %pause();
     
-        compInfo = [compInfo; rowMin rowMax colMin colMax noComps+1];
-
+        % Storing the bounding boxes for further processing
+        compInfo = [compInfo; rowMin rowMax colMin colMax];
         textComponents(compMembers) = noComps + 1;
         noComps = noComps + 1;
     end
@@ -110,16 +110,19 @@ function[textComponents] = filterComponents(strokeWidthImg, components)
         %fprintf('Containments : %d \n', noContainments);
         % If there are containments, ignore the current component
         if(noContainments > 0)
-            textComponents(textComponents == compInfo(i, 5)) = 0;
+            textComponents(textComponents == i) = 0;
         end
     end
 
     % Re-hashing the components with appropriate indices
     compIds = unique(textComponents(:));
+    newCompInfo = zeros(length(compIds) - 1, 4); % Ignoring the zero unique value
     % Scrapping zero
     compIds(compIds == 0) = [];
-    % Re-hashing the components appropriately
+    % Re-hashing the components and information appropriately
     for i = 1:length(compIds)
         textComponents(textComponents == compIds(i)) = i;
+        newCompInfo(i, :) = compInfo(i, :);
     end
+    componentBboxes = newCompInfo;
 end
