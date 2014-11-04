@@ -1,4 +1,4 @@
-function[grouping] = groupLetters(image, strokeWidthImg, components, compInfo)
+function[grouping, angles] = groupLetters(image, strokeWidthImg, components, compInfo)
     % This function performs grouping of components to identify text on a single line
     %
     % Usage:
@@ -31,13 +31,7 @@ function[grouping] = groupLetters(image, strokeWidthImg, components, compInfo)
 
     % Converting the image into LAB space for color comparision
     [L, a, b] = RGB2Lab(image);
-    %[L, a, b] = RGB2Lab(image(:, :, 1), image(:, :, 2), image(:, :, 3));
-    %labImg = zeros(imSize); 
     
-    %labImg(:, :, 1) = L;
-    %labImg(:, :, 2) = a;
-    %labImg(:, :, 3) = b;
-
     % Matrix indicating the final grouping between the components
     grouping = false(noComps);
     angles = zeros(noComps);
@@ -98,35 +92,6 @@ function[grouping] = groupLetters(image, strokeWidthImg, components, compInfo)
 
             angles(compId, i) = angle;
             angles(i, compId) = angle;
-        end
-    end
-        
-    % For merging the pairs based on the angle and creating components of text
-    % Checking for chains to start merging from
-    chains = {}; 
-    noChains = 0;
-    for row = 1:size(grouping, 1)
-        for col = row+1:size(grouping, 2)
-            % Ignore if there is no matching
-            if(~grouping(row, col))
-                continue;
-            end
-
-            % Checking for the angle consistency
-            connected = (abs(angles(grouping(col,col+1:end) == 1) - angles(row, col)) < angleThreshold);
-
-            % Next likely candidate found
-            if(sum(connected) > 0)
-
-                nextElems = find(connected == 1) + col;
-                for nextElemId = 1:length(nextElems)
-                    [row, col, nextElems(nextElemId)]
-                    %chains{noChains+1} = [row, col, nextElems(nextElemId)];
-                    %noChains = noChains + 1;
-                    %fprintf('%d %d %d\n', row, col, sum(connected));
-                end
-            end
-
         end
     end
 end
