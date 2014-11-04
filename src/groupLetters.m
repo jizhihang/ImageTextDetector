@@ -75,7 +75,7 @@ function[grouping, angles] = groupLetters(image, strokeWidthImg, components, com
             % Checking for closeness in color space
             curMeanColor = [mean(L(curMembers)), mean(a(curMembers)), mean(b(curMembers))];
             if(norm(curMeanColor - meanColor) > colorDistance)
-                %continue;
+                continue;
             end
 
             % Declaring the components to be from the same text; calculating the angle

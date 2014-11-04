@@ -2,8 +2,8 @@ imgId = 2;
 image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
-signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
-%signImg = imread('../images/signBoard.jpg');
+%signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
+signImg = imread('../images/signBoard.jpg');
 swtImg = swtransform(signImg);
 %swtImg = swtransform(image(:, :, [1 1 1]));
 
@@ -14,6 +14,7 @@ components = connectedComponents(swtImg, 3.2);
 %figure; imagesc(components)
 [groupedComponents, angles] = groupLetters(signImg, swtImg, components, bboxes);
 chains = createChains(groupedComponents, angles);
+%chains = pruneSmallChains(chains);
 
 % Color the components.
 color_idx = 1;
@@ -27,6 +28,8 @@ for idx=1:1:size(chains,1)
    xmin = min(x); xmax = max(x);
    ymin = min(y); ymax = max(y);
    components = drawRect(components, [xmin xmax ymin ymax], 100);
+   signImg = drawRect(signImg, [xmin xmax ymin ymax], [255, 0, 0]);
    color_idx = color_idx + 1;
 end
-imagesc(components);
+figure; imagesc(components);
+figure; imshow(signImg);
