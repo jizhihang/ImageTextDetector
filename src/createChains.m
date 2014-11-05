@@ -1,14 +1,19 @@
-function [chains] = createChains(grouping, angles)
+function [chains, chainInfo] = createChains(grouping, angles, compInfo)
     % Create chain of components based on a certain set of rules. 
     % Input:
     %       groups: an NXN binary matrix. where groups(i,j) = 1 if the
     %               components i and j are compatible.
     %       angles: an NXN matrix, where angles{i,j} is the angle of each
     %               pair of components which form a group.
+    %       compInfo : Information about bounding boxes of the components
+    %
     % Output:
     %       chains: A cell of component numbers, where each cell contains
     %               the number of the components which form a chain.
-    
+    %       chainInfo : Information about the extent of the chain in the bounding box format
+    %                   Format: [rowMin rowMax colMin colMax]
+    %
+
     angleThreshold = pi/12;
     % We now need to create chain of letters based on the angle of the
     % component pair.
@@ -61,5 +66,14 @@ function [chains] = createChains(grouping, angles)
         % Chains have changed. Discard the old chain and store the new
         % chain.
         chains = new_chains;
+    end
+
+    % For each chain, we compute the extent in form of [rowMin, rowMax, colMin, colMax]
+    % based on its components
+    chainInfo = zeros(length(chains), 4);
+    for i = 1:length(chains)
+        % Format : minRow, maxRow, minCol, maxCol
+        chainInfo(i, :) = [min(compInfo(chains{i}, 1)), max(compInfo(chains{i}, 2)), ... % Row span
+                             min(compInfo(chains{i}, 3)), max(compInfo(chains{i}, 4))]; % Col span
     end
 end
