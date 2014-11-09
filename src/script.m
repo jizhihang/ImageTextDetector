@@ -2,19 +2,35 @@ imgId = 2;
 image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
-signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
+%signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
+signImg = imresize(imread('../Dataset/img_97.jpg'), 0.50);
 %signImg = imread('../images/signBoard.jpg');
+
+tic
 swtImg = swtransform(signImg);
+toc
 %swtImg = swtransform(image(:, :, [1 1 1]));
 
 %figure; imagesc(swtImg);
-components = connectedComponents(swtImg, 3.2);
+tic
+rawComponents = connectedComponents(swtImg, 3.2);
+toc
 %figure; imagesc(components);
-[components, bboxes] = filterComponents(swtImg, components);
-%figure; imagesc(components)
+tic
+[components, bboxes] = filterComponents(swtImg, rawComponents);
+toc
+
+figure; imagesc(components)
+
+tic
 [groupedComponents, angles] = groupLetters(signImg, swtImg, components, bboxes);
+toc
+tic
 [chains, chainbboxes] = createChains(groupedComponents, angles, bboxes);
-chains = pruneSmallChains(chains, chainbboxes);
+toc
+tic
+%chains = pruneSmallChains(chains, chainbboxes);
+toc
 
 % Color the components.
 color_idx = 1;

@@ -16,7 +16,7 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
     % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
     [yindices, xindices] = find(imedge == 1);
    
-    maxStrokeWidth = 50;
+    maxStrokeWidth = 100;
     imSize = size(imgrad);
     swt_image = inf(imSize);
 
@@ -130,7 +130,7 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
     end
     
     % Replacing infs with more- realistic value
-    swt_image(swt_image == inf) = hypot(imSize(1), imSize(2));
+    swt_image(swt_image == inf) = maxStrokeWidth;
 
     % In order to handle corner pixels, we revisit the non-discarded rays and calculate the median
     for rayId = 1:noRays

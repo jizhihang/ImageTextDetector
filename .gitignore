@@ -4,6 +4,10 @@
 *.o
 *.obj
 
+# Image Library
+# Satwik
+Dataset/
+
 # Precompiled Headers
 *.gch
 *.pch

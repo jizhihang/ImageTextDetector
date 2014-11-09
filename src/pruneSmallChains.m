@@ -42,28 +42,28 @@ function chains = pruneSmallChains(chains, chainInfo)
 
             % cidx is contained in idx row-wise
             if(chainInfo(idx, 1) < chainInfo(cidx, 1) && chainInfo(idx, 2) > chainInfo(cidx, 2) ...
-                && abs(chainInfo(idx, 3) - chainInfo(cidx, 3)) < offsetThreshold ... 
-                && abs(chainInfo(idx, 4) - chainInfo(cidx, 4)) < offsetThreshold)
+                && chainInfo(idx, 3) - chainInfo(cidx, 3) < offsetThreshold ... 
+                && chainInfo(cidx, 4) - chainInfo(idx, 4) < offsetThreshold)
                 chains{cidx} = [];
             end
             % idx is contained in idx row-wise
             if(chainInfo(idx, 1) > chainInfo(cidx, 1) && chainInfo(idx, 2) < chainInfo(cidx, 2) ...
-                && abs(chainInfo(idx, 3) - chainInfo(cidx, 3)) < offsetThreshold ... 
-                && abs(chainInfo(idx, 4) - chainInfo(cidx, 4)) < offsetThreshold)
+                && chainInfo(cidx, 3) - chainInfo(idx, 3) < offsetThreshold ... 
+                && chainInfo(idx, 4) - chainInfo(cidx, 4) < offsetThreshold)
                 chains{idx} = [];
                 break;
             end
 
             % cidx is contained in idx column-wise
             if(chainInfo(idx, 3) < chainInfo(cidx, 3) && chainInfo(idx, 4) > chainInfo(cidx, 4) ...
-                && abs(chainInfo(idx, 1) - chainInfo(cidx, 1)) < offsetThreshold ... 
-                && abs(chainInfo(idx, 2) - chainInfo(cidx, 2)) < offsetThreshold)
+                && chainInfo(idx, 1) - chainInfo(cidx, 1) < offsetThreshold ... 
+                && chainInfo(cidx, 2) - chainInfo(idx, 2) < offsetThreshold)
                 chains{cidx} = [];
             end
             % idx is contained in idx column-wise
             if(chainInfo(idx, 3) > chainInfo(cidx, 3) && chainInfo(idx, 4) < chainInfo(cidx, 4) ...
-                && abs(chainInfo(idx, 1) - chainInfo(cidx, 1)) < offsetThreshold ... 
-                && abs(chainInfo(idx, 2) - chainInfo(cidx, 2)) < offsetThreshold)
+                && chainInfo(cidx, 1) - chainInfo(idx, 1) < offsetThreshold ... 
+                && chainInfo(idx, 2) - chainInfo(cidx, 2) < offsetThreshold)
                 chains{idx} = [];
                 break;
             end
@@ -90,5 +90,4 @@ function chains = pruneSmallChains(chains, chainInfo)
 
     % Finally, remove those empty chains.
     chains = chains(~cellfun('isempty',chains));
-    length(chains)
 end

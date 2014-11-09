@@ -18,7 +18,7 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
     varianceMeanRatio = 0.7; % Discard if variance > varianceMeanRatio * mean
     maxAspectRatio = 10.0; % Discard if aspect ratio is not between (1/maxAspectRatio, maxAspectRatio)
     diameterStrokeRatio = 10.0; % Discard if diameter is greater than diameterStrokeRatio * mean
-
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Number of components in the original segmentation
     maxCompId = max(components(:));
@@ -46,13 +46,13 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
         end
 
         % Extract the bounding box
-        [rowInds colInds] = ind2sub(imSize, compMembers);
+        [rowInds, colInds] = ind2sub(imSize, compMembers);
         rowMin = min(rowInds); rowMax = max(rowInds);
         colMin = min(colInds); colMax = max(colInds);
         rowSpan = rowMax - rowMin; colSpan = colMax - colMin;
 
         % Discarding the component if the height is not within [10, 300]
-        if(rowSpan < 10 || rowSpan > 300)
+        if((rowSpan < 10) || (rowSpan > 300))
             continue;
         end
             

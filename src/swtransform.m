@@ -25,12 +25,12 @@ function swt_image = swtransform(image)
     %imgrad = imgrad.*imedge;
     
     % Computing the stroke widths along the positive direction of the gradient
-    positive = true;
-    swt_image = getStrokeWidths(imgrad, imedge, positive);
+    %positive = true;
+    %swt_image = getStrokeWidths(imgrad, imedge, positive);
     %figure; imagesc(swt_image)
 
     % Computing the stroke widths along the negative direction of the gradient
-    %positive = false;
-    %swt_image = getStrokeWidths(imgrad, imedge, positive);
+    positive = false;
+    swt_image = getStrokeWidths(imgrad, imedge, positive);
     %figure; imagesc(swt_image)
 end
