@@ -3,7 +3,7 @@ image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
 %signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
-signImg = imresize(imread('../Dataset/img_97.jpg'), 0.50);
+signImg = imresize(imread('../icdar2013/img_98.jpg'), 0.50);
 %signImg = imread('../images/signBoard.jpg');
 
 tic
@@ -20,7 +20,8 @@ tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
 
-figure; imagesc(components)
+subplot(1,2,1); imagesc(components)
+subplot(1,2,2); imagesc(rawComponents)
 
 tic
 [groupedComponents, angles] = groupLetters(signImg, swtImg, components, bboxes);
@@ -28,8 +29,9 @@ toc
 tic
 [chains, chainbboxes] = createChains(groupedComponents, angles, bboxes);
 toc
+
 tic
-%chains = pruneSmallChains(chains, chainbboxes);
+chains = pruneSmallChains(chains, chainbboxes);
 toc
 
 % Color the components.

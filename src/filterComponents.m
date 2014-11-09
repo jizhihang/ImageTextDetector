@@ -109,7 +109,7 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
         %Debugging
         %fprintf('Containments : %d \n', noContainments);
         % If there are containments, ignore the current component
-        if(noContainments > 0)
+        if(noContainments > 2)
             textComponents(textComponents == i) = 0;
         end
     end

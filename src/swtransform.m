@@ -15,7 +15,7 @@ function swt_image = swtransform(image)
     imgray = rgb2gray(image);
     
     % Get the canny output for the image
-    imedge = edge(imgray, 'canny'); % Let it choose the thresholds as of now.
+    imedge = edge(imgray, 'canny', [], 3.89); % Let it choose the thresholds as of now.
    
     % edge does not return the gradient map. So get one.
     [gx, gy] = derivative5(double(imgray), 'x', 'y');
