@@ -27,8 +27,8 @@ tic
 toc
 
 recImage = drawComponentPairs(signImg, groupedComponents, bboxes);
-imshow(recImage)
-return
+figure; imshow(recImage)
+
 tic
 [chains, chainbboxes] = createChains(groupedComponents, angles, bboxes);
 toc
