@@ -2,8 +2,8 @@ imgId = 2;
 image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
-%signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
-signImg = imresize(imread('../Dataset/img_121.jpg'), 0.5);
+signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
+%signImg = imresize(imread('../Dataset/img_121.jpg'), 0.5);
 %signImg = imread('../images/signBoard.jpg');
 
 tic
@@ -22,6 +22,9 @@ toc
 %subplot(1,2,1); imagesc(components)
 %subplot(1,2,2); imagesc(rawComponents)
 
+annotatedImage = annotateComponents(signImg, components);
+figure; imshow(annotatedImage);
+
 tic
 [groupedComponents, angles] = groupLetters(signImg, swtImg, components, bboxes);
 toc
@@ -34,7 +37,7 @@ tic
 toc
 
 tic
-%chains = pruneSmallChains(chains, chainbboxes);
+chains = pruneSmallChains(chains, chainbboxes);
 toc
 
 % Color the components.
