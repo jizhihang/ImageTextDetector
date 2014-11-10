@@ -67,7 +67,7 @@ function[grouping, angles] = groupLetters(image, strokeWidthImg, components, com
             curMembers = components == i;
             curMedianWidth = median(strokeWidthImg(curMembers));
             % If median of stroke width are comparable
-            if( curMedianWidth > strokeWidthRatio * medianWidth || ...
+            if(curMedianWidth > strokeWidthRatio * medianWidth || ...
                 medianWidth > strokeWidthRatio * curMedianWidth)
                 continue;
             end

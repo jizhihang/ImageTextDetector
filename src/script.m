@@ -3,7 +3,7 @@ image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
 %signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
-signImg = imresize(imread('../icdar2013/img_98.jpg'), 0.50);
+signImg = imresize(imread('../Dataset/img_121.jpg'), 0.5);
 %signImg = imread('../images/signBoard.jpg');
 
 tic
@@ -15,23 +15,26 @@ toc
 tic
 rawComponents = connectedComponents(swtImg, 3.2);
 toc
-%figure; imagesc(components);
 tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
 
-subplot(1,2,1); imagesc(components)
-subplot(1,2,2); imagesc(rawComponents)
+%subplot(1,2,1); imagesc(components)
+%subplot(1,2,2); imagesc(rawComponents)
 
 tic
 [groupedComponents, angles] = groupLetters(signImg, swtImg, components, bboxes);
 toc
+
+recImage = drawComponentPairs(signImg, groupedComponents, bboxes);
+imshow(recImage)
+return
 tic
 [chains, chainbboxes] = createChains(groupedComponents, angles, bboxes);
 toc
 
 tic
-chains = pruneSmallChains(chains, chainbboxes);
+%chains = pruneSmallChains(chains, chainbboxes);
 toc
 
 % Color the components.
@@ -45,7 +48,7 @@ for idx=1:1:size(chains,1)
    [x, y] = find(chained_components == color_idx);
    xmin = min(x); xmax = max(x);
    ymin = min(y); ymax = max(y);
-   components = drawRect(components, [xmin xmax ymin ymax], 100);
+   components = drawRect(components, [xmin xmax ymin ymax], 10);
    signImg = drawRect(signImg, [xmin xmax ymin ymax], [255, 0, 0]);
    color_idx = color_idx + 1;
 end
