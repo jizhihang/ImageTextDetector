@@ -21,6 +21,6 @@ function[recImage] = drawComponentPairs(image, grouping, compInfo)
         minCol = min(box1(3), box2(3));
         maxCol = max(box1(4), box2(4));
         
-        recImage = drawRect(recImage, [minRow, maxRow, minCol, maxCol], [255.0, 0.0, 0.0]);
+        recImage = drawRect(recImage, [minRow, maxRow-1, minCol, maxCol-1], [255.0, 0.0, 0.0]);
     end
 end

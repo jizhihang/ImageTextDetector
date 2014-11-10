@@ -18,10 +18,8 @@ function[grouping, angles] = groupLetters(image, strokeWidthImg, components, com
     % Set of parameters that can be tuned for better performance
     heightRatio = 2.0 ; % Ratio of the heights
     strokeWidthRatio = 2.0; % Ratio of median of stroke widths
-    distanceWidthRatio = 3.0; % Ratio between distance between them and maximum width
-    colorDistance = 5.0; % Distance between their colors in the LAB color space
-
-    angleThreshold = pi/18; % Threshold in collecting pairs of components from same text
+    distanceWidthRatio = 5.0; % Ratio between distance between them and maximum width
+    colorDistance = 10.0; % Distance between their colors in the LAB color space
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Number of components in the original segmentation
