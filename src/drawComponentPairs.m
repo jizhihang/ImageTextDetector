@@ -21,6 +21,9 @@ function[recImage] = drawComponentPairs(image, grouping, compInfo)
         minCol = min(box1(3), box2(3));
         maxCol = max(box1(4), box2(4));
         
+        % Save the image separately.
+        tmpImg = drawRect(image, [minRow, maxRow-1, minCol, maxCol-1], [255.0, 0.0, 0.0]);
+        imwrite(tmpImg, sprintf('output/image_%d.png', i));
         recImage = drawRect(recImage, [minRow, maxRow-1, minCol, maxCol-1], [255.0, 0.0, 0.0]);
     end
 end

@@ -1,9 +1,11 @@
+clear all;
+
 imgId = 2;
 image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %signImg = imread('../images/testImage.jpg');
-signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
-%signImg = imresize(imread('../Dataset/img_121.jpg'), 0.5);
+%signImg = imresize(imread('../images/beachPark.jpg'), 0.25);
+signImg = imresize(imread('../Dataset/img_121.jpg'), 0.5);
 %signImg = imread('../images/signBoard.jpg');
 
 tic
@@ -29,9 +31,9 @@ tic
 [groupedComponents, angles] = groupLetters(signImg, swtImg, components, bboxes);
 toc
 
-recImage = drawComponentPairs(signImg, groupedComponents, bboxes);
+recImage = drawComponentPairs(annotatedImage, groupedComponents, bboxes);
 figure; imshow(recImage)
-
+return;
 tic
 [chains, chainbboxes] = createChains(groupedComponents, angles, bboxes);
 toc

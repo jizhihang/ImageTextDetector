@@ -14,7 +14,7 @@ function [chains, chainInfo] = createChains(grouping, angles, compInfo)
     %                   Format: [rowMin rowMax colMin colMax]
     %
 
-    angleThreshold = pi/4;
+    angleThreshold = pi/10;
     % We now need to create chain of letters based on the angle of the
     % component pair.
     
