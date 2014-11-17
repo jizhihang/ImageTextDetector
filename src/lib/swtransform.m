@@ -1,4 +1,4 @@
-function swt_image = swtransform(image)
+function swt_image = swtransform(image, direction)
     % Function to calculate the Stroke Width Transform of a given image.
     % The function is named swtransform to avoid confusion with SWT,
     % stationary wavelet coefficients. The idea behind this code can  be
@@ -7,6 +7,8 @@ function swt_image = swtransform(image)
     %
     % Usage : swtImage = swtransform(image)
     % image = RGB image on which Stroke Width Transformation is to be applied
+    % direction = true if evaluating dark text on light back ground and
+    %             false if evaluating light text on dark back ground.
     %
     % Output:
     % swtImage = Matrix, with same dimensions as images, with estimated stroke width at each point
@@ -30,7 +32,6 @@ function swt_image = swtransform(image)
     %figure; imagesc(swt_image)
 
     % Computing the stroke widths along the negative direction of the gradient
-    positive = false;
-    swt_image = getStrokeWidths(imgrad, imedge, positive);
+    swt_image = getStrokeWidths(imgrad, imedge, direction);
     %figure; imagesc(swt_image)
 end

@@ -1,5 +1,10 @@
 clear all;
+%% Load the files in the directories.
+addpath(genpath('vanilla'));
+addpath(genpath('lib'));
+addpath(genpath('utils'));
 
+%% Main script begins.
 imgId = 2;
 image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
@@ -9,7 +14,7 @@ signImg = imresize(imread('../Dataset/img_121.jpg'), 0.5);
 %signImg = imread('../images/signBoard.jpg');
 
 tic
-swtImg = swtransform(signImg);
+swtImg = swtransform(signImg, false);
 toc
 %swtImg = swtransform(image(:, :, [1 1 1]));
 
