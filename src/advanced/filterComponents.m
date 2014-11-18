@@ -20,6 +20,8 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
     diameterStrokeRatio = 10.0; % Discard if diameter is greater than diameterStrokeRatio * mean
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %% Primary level classifier.
     % Number of components in the original segmentation
     maxCompId = max(components(:));
     imSize = size(strokeWidthImg);
@@ -37,50 +39,33 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
 
         % Mean value of swt in the image
         meanWidth = mean(strokeWidthImg(compMembers));
-        varWidth = var(strokeWidthImg(compMembers));
-
-        % Ignoring this part, check NOTE below
-        % Discard if the variance is too large
-        if(varWidth > varianceMeanRatio * meanWidth)
-            %continue;
-        end
-
+        varWidth = sqrt(var(strokeWidthImg(compMembers)));
+		widthVariation = varWidth/meanWidth;
+		
         % Extract the bounding box
         [rowInds, colInds] = ind2sub(imSize, compMembers);
         rowMin = min(rowInds); rowMax = max(rowInds);
         colMin = min(colInds); colMax = max(colInds);
         rowSpan = rowMax - rowMin; colSpan = colMax - colMin;
+		aspectRatio = min(rowSpan/colSpan, colSpan/rowSpan);
 
-        % Discarding the component if the height is not within [10, 300]
-        if((rowSpan < 10) || (rowSpan > 300))
-            continue;
+        % Get the occupancy ratio
+		occupationRatio = length(compMembers)/((rowSpan)*colSpan);
+		
+		% Need the three parameters to lie within a particular range for
+        % accepting it as a component.
+        if ( widthVariation <= 1 && ...
+             aspectRatio >= 0.1 && aspectRatio <= 1 && ...
+             occupationRatio >= 0.1 )
+         
+            % Storing the bounding boxes for further processing
+            compInfo = [compInfo; rowMin rowMax colMin colMax];
+            textComponents(compMembers) = noComps + 1;
+            noComps = noComps + 1;
         end
-            
-        % Aspect ratio constraint along with diameter constraint
-        if (rowSpan > maxAspectRatio * colSpan ...
-                || colSpan > maxAspectRatio * rowSpan ...
-                || hypot(rowSpan, colSpan) > diameterStrokeRatio *  meanWidth)
-            continue;
-        end
-
-        % NOTE : Variance based elimination removes Es and Xs.
-        % Debugging; needs thorough investigation
-        % Connected components have very high stroke widths, 
-        % Xs and Es are problematic; need to recheck the whole pipeline wrt these two characters
-        %fprintf('( %f %f %f ) %d\n', varWidth, meanWidth, varWidth / meanWidth, ...
-        %                                        length(compMembers));
-
-        %mask = zeros(imSize);
-        %mask(compMembers) = 1;
-        %figure(1); imagesc(mask)
-        %figure(2); imagesc(strokeWidthImg.*mask);
-        %pause();
-    
-        % Storing the bounding boxes for further processing
-        compInfo = [compInfo; rowMin rowMax colMin colMax];
-        textComponents(compMembers) = noComps + 1;
-        noComps = noComps + 1;
     end
+    
+    %% Auxiliary components elimination.
     
     % Finding the components that contain more than two other components and discarding them
     % Taking the brute force approach for now
@@ -125,4 +110,9 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
         newCompInfo(i, :) = compInfo(i, :);
     end
     componentBboxes = newCompInfo;
+    
+    %% Secondary classifier based on Random Forest model obtained from
+    %  training data
+    
+    % implement random forest classifier here.
 end
