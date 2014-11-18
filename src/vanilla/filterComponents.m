@@ -122,7 +122,7 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
     % Re-hashing the components and information appropriately
     for i = 1:length(compIds)
         textComponents(textComponents == compIds(i)) = i;
-        newCompInfo(i, :) = compInfo(i, :);
+        newCompInfo(i, :) = compInfo(compIds(i), :);
     end
     componentBboxes = newCompInfo;
 end
