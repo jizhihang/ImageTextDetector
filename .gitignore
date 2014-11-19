@@ -34,3 +34,6 @@ Dataset/
 # Temporary files
 *~
 *.asv
+
+# Output folder
+output/*

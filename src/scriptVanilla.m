@@ -10,7 +10,7 @@ addpath(genpath('utils'));
 
 %image = imread('../images/testImage.jpg');
 %image = imresize(imread('../images/beachPark.jpg'), 0.25);
-image = imresize(imread('../Dataset/img_121.jpg'), 0.5);
+image = imresize(imread('../Dataset/img_23.jpg'), 0.8);
 %image = imread('../images/signBoard.jpg');
 
 tic

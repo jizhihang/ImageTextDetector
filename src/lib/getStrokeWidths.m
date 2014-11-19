@@ -16,7 +16,7 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
     % Find returns (rowIndex, colIndex) which infact is (y, x) for co-ordinate geometry
     [yindices, xindices] = find(imedge == 1);
    
-    maxStrokeWidth = 100;
+    maxStrokeWidth = 200;
     imSize = size(imgrad);
     swt_image = inf(imSize);
 
