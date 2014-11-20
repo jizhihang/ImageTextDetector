@@ -10,7 +10,7 @@ imgId = 2;
 
 %image = imread('../images/testImage.jpg');
 %image = imresize(imread('../images/beachPark.jpg'), 0.25);
-image = imresize(imread('../../Dataset/img_121.jpg'), 0.5);
+image = imresize(imread('../../Dataset/img_121.jpg'), 1.0);
 %image = imread('../images/signBoard.jpg');
 
 tic
