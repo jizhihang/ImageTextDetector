@@ -10,7 +10,8 @@ function [characteristics] = getComponentCharacteristics(componentSWT, component
     %                   [minRow, maxRow, minCol, maxCol] format
     %
     % characteristics = struct with following properties
-    % .barycenter = [xBary, yBary]
+    % .barycenter = [xBary, yBary] + [minCol minRow]
+    % .relCenter = [xBary, yBary]
     % .majorAxis = Length of the major axis
     % .minorAxis = Length of the minor axis
     % .charRadius = Characteristic radius = mean of minor and major axes
@@ -54,6 +55,7 @@ function [characteristics] = getComponentCharacteristics(componentSWT, component
     % Final assignments
     minRow = componentInfo(1); minCol = componentInfo(3);
     characteristics.barycenter = [xBary, yBary] + [minCol, minRow];
+    characteristics.relCenter = [xBary, yBary];
     characteristics.orientation = theta;
     characteristics.majorAxis = majorAxis;
     characteristics.minorAxis = minorAxis;

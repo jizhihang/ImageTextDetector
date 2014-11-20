@@ -9,8 +9,9 @@ function compInfoStruct = getComponentInformation(compMap, chars,...
     % First template is simple, it is the circle formed by the
     % characteristic radius.
     [x, y] = meshgrid(1:xdim, 1:ydim);
-    x = x - chars.barycenter(1); y = y - chars.barycenter(2);
+    x = x - chars.relCenter(1); y = y - chars.relCenter(2);
     templatePoints = find(x.^2 + y.^2 <= chars.charRadius^2);
+    
     % Get all the orientations and rotate it by characteristic orientation.
     contourOrientations = gradContour(templatePoints) + chars.orientation;
     edgeOrientations = gradComp(templatePoints) + chars.orientation;
@@ -28,7 +29,7 @@ function compInfoStruct = getComponentInformation(compMap, chars,...
     contourShape = contourHist;
     edgeShape = edgeHist;
     templateMask = zeros(size(gradContour));
-    templateMask(x+chars.barycenter(1), y+chars.barycenter(2)) = 1;
+    templateMask(templatePoints) = 1;
     templateComponent = compMap.*templateMask;
     occupationRatio = sum(templateComponent(:))/(pi*chars.charRadius^2);
     
@@ -38,7 +39,7 @@ function compInfoStruct = getComponentInformation(compMap, chars,...
     xr = x*cos(chars.orientation) - y*sin(chars.orientation);
     yr = x*sin(chars.orientation) + y*cos(chars.orientation);
     angleMap = pi + atan2(yr, xr);
-    
+    %imagesc(templateMask); pause();
     sectorAngles = [0 pi/2 pi 3*pi/2];
     
     for minRadius = minRadii

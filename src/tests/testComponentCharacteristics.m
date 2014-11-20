@@ -32,7 +32,7 @@ toc
 % Components
 compIds = unique(components(:));
 
-drawImage = image;
+drawImage = components(:,:,[1 1 1]);%image;
 % For each component, excluding zero
 for i = 1:length(compIds)-1
     rowRange = bboxes(i,1):bboxes(i,2);

@@ -14,7 +14,7 @@ function [ drawImage ] = drawComponentCharacteristics(image, characteristics)
     % Adding utils for bresenham
     
     % Drawing the characteristic radius
-    radiusPen = vision.MarkerInserter('Shape','Circle', 'Size', floor(characteristics.charRadius), ...
+    radiusPen = vision.MarkerInserter('Shape','Circle', 'Size', ceil(characteristics.charRadius), ...
                     'BorderColor','Custom','CustomBorderColor',uint8([0 255 0]));
     
     drawImage = step(radiusPen, image, uint32(characteristics.barycenter));
@@ -28,7 +28,7 @@ function [ drawImage ] = drawComponentCharacteristics(image, characteristics)
     % Drawing the orientation
     % Getting the line for the orientation from bresenham
     [xPts, yPts] = bresenhamLine(characteristics.barycenter, characteristics.orientation, ...
-                                floor(characteristics.charRadius));
+                                ceil(characteristics.charRadius));
     
     % Going along positive direction
     xPts = uint32(xPts(1, :));
