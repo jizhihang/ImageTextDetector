@@ -1,4 +1,9 @@
 % Script to generate ground truth from the MSRA dataset
+% Adding the paths
+addpaths;
+
+% Visualizing the results
+visualize = false;
 
 % Reading the images in the training folder
 trainImgPath = '../../MSRA/train/%s';
@@ -6,11 +11,10 @@ trainImgs = dir(sprintf(trainImgPath, '*.jpg'));
 
 noImgs = length(trainImgs);
 
-for i = 1:20 %noImgs
+for i = 1:5 %noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
-    %figure(1); imshow(image)
 
     % Reading the ground truth for the image
     trainLabelPath = strrep(imagePath, '.JPG', '.gt');
@@ -43,14 +47,31 @@ for i = 1:20 %noImgs
         
         % Rotating the corners and translate to the center
         corners = bsxfun(@plus, (R * corners')',  centerPt);
+        
+        if(visualize)
+            % Drawing the points
+            drawPts = [drawPts; corners];
+        end
 
-        drawPts = [drawPts; corners];
+        % Bounding box for the component (minRow, maxRow, minCol, maxCol) format
+        box = floor([min(corners(:,2)), max(corners(:,2)), min(corners(:,1)), max(corners(:, 1))]);
+        % Extracting the subimage
+        subImg = image(box(1):box(2), box(3):box(4), :);
+
+        % Get swt image and components
+        swtImg = swtransform(subImg, false);
+        rawComponents = connectedComponents(swtImg, 3.2);
+
+        figure(1); imshow(subImg)
+        figure(2); imagesc(rawComponents)
+        pause()
     end
-    
-    if
-    drawImage = step(centerMarker, drawImage, uint32(centerPts));
-    drawImage = step(ptMarker, drawImage, uint32(drawPts));
 
-    figure(2); imshow(drawImage)
-    pause(3);
+    if visualize
+        drawImage = step(centerMarker, drawImage, uint32(centerPts));
+        drawImage = step(ptMarker, drawImage, uint32(drawPts));
+
+        figure(2); imshow(drawImage)
+        pause(3);
+    end
 end

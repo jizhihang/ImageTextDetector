@@ -5,7 +5,7 @@ function swt_image = swtransform(image, direction)
     % found at 
     %     http://www.math.tau.ac.il/~turkel/imagepapers/text_detection.pdf
     %
-    % Usage : swtImage = swtransform(image)
+    % Usage : swtImage = swtransform(image, direction)
     % image = RGB image on which Stroke Width Transformation is to be applied
     % direction = true if evaluating dark text on light back ground and
     %             false if evaluating light text on dark back ground.
