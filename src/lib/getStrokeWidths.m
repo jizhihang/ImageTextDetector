@@ -109,8 +109,8 @@ function[strokeWidthImg] = getStrokeWidths(imgrad, imedge, positive)
         
         % We are only tolerant of 30 degrees error.
         %if 1
-        if abs(angle - (pi + imgrad(ynear, xnear))) < pi/6 | ...
-            abs(angle - (-pi + imgrad(ynear, xnear))) < pi/6
+        if abs(angle - (pi + imgrad(ynear, xnear))) < pi/2 | ...
+            abs(angle - (-pi + imgrad(ynear, xnear))) < pi/2
             % SWT value is the distance between the two points.
             swt_value = hypot(current_point(1) - xnear, current_point(2) - ynear);
 

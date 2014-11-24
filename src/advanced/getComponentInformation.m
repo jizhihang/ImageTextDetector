@@ -1,5 +1,5 @@
 function compInfoStruct = getComponentInformation(compMap, chars,...
-                                        gradContour, gradComp, swtComp)
+                                        gradContour, gradComp, swtComp, bbox)
     % Function to get the information for a single component.
     % More information will be added later.
     
@@ -85,5 +85,9 @@ function compInfoStruct = getComponentInformation(compMap, chars,...
     compInfoStruct.occupationRatio = occupationRatio;
     compInfoStruct.AxialRatio = chars.majorAxis/chars.minorAxis;
     compInfoStruct.widthVariation = mean(swtComp)/sqrt(var(swtComp));
-    compInfoStruct.density = sum(compMap(:))/(pi*chars.charRadius^2);    
+    compInfoStruct.density = sum(compMap(:))/(pi*chars.charRadius^2);
+    compInfoStruct.bbox = bbox;
+    compInfoStruct.size = chars.charRadius;
+    compInfoStruct.center = chars.barycenter;
+    compInfoStruct.direction = chars.orientation;
 end

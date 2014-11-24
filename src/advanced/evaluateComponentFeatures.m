@@ -1,6 +1,30 @@
-function compInfo = evaluateComponentFeatures(components, image, bboxes, swtImg)
-    % Function to evaluate the component level features of an image. 
-    % Full information will be added later.
+function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxes)
+    % Function to evaluate the component level features of an image. The
+    % function returns a set of features for each component which will be
+    % used for training a random forest classifier in the training phase
+    % and used for pruning non-text candidates in the testing phase.
+    % 
+    % Input:
+    %       image: Input image.
+    %       swtImage: Stroke Width Transform of the image.
+    %       components: Matrix of the same size of image containing
+    %       component numbers for each component.
+    %       bboxes: Bounding boxes for each component.
+    %
+    %Output:
+    %   compFeat: Cell of structs with the following entries:
+    %           .contourShape: HoG for the contour of the component.
+    %           .edgeShape: HoG for the component.
+    %           .occupationRatio: Histogram of densities per each sector in
+    %               the template.
+    %           .AxialRatio: Ratio of the major axis to minor axis of the
+    %               component.
+    %           .widthVariation: mean SWT / std dev SWT of the component.
+    %           .density: Ratio of number of foreground pixels to
+    %               characteristic area of the component.
+    %           .bbox: Bounding box of the component.
+    %           .size: Characteristic radius of the component.
+    %           .center: Center of the component.
     
     compIds = unique(components);
     % Get the gray scale image
@@ -9,7 +33,7 @@ function compInfo = evaluateComponentFeatures(components, image, bboxes, swtImg)
     [gx, gy] = derivative5(double(imgray), 'x', 'y');
     imgrad =  atan2(gy, gx);
     
-    compInfo = [];
+    compFeat = {};
     % Get each component's information in series.
     for i = 1:length(compIds)-1
         rowRange = bboxes(i,1):bboxes(i,2);
@@ -40,7 +64,7 @@ function compInfo = evaluateComponentFeatures(components, image, bboxes, swtImg)
         compMap(comp == i) = 1;
         compInfoStruct = getComponentInformation(compMap, chars, ...
                                                  gradContour, gradComp, ...
-                                                 swtComp);
-        compInfo = [compInfo compInfoStruct];
+                                                 swtComp, bboxes(i,:));
+        compFeat{i} = compInfoStruct;
     end
 end
