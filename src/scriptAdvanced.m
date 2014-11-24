@@ -51,6 +51,7 @@ toc
 % Color the components.
 color_idx = 1;
 chained_components = zeros(size(components));
+drawComponents = components;
 for idx=1:1:size(chains,1)
    chain = chains{idx};
    for cnum=chain
@@ -59,9 +60,9 @@ for idx=1:1:size(chains,1)
    [x, y] = find(chained_components == color_idx);
    xmin = min(x); xmax = max(x);
    ymin = min(y); ymax = max(y);
-   components = drawRect(components, [xmin xmax ymin ymax], 10);
+   drawComponents = drawRect(drawComponents, [xmin xmax ymin ymax], 10);
    signImg = drawRect(signImg, [xmin xmax ymin ymax], [255, 0, 0]);
    color_idx = color_idx + 1;
 end
-figure; imagesc(components);
+figure; imagesc(drawComponents);
 figure; imshow(signImg);

@@ -10,7 +10,7 @@ imgId = 2;
 
 %image = imread('../images/testImage.jpg');
 %image = imresize(imread('../images/beachPark.jpg'), 0.25);
-image = imresize(imread('../../Dataset/img_121.jpg'), 0.5);
+image = imresize(imread('../../Dataset/img_121.jpg'), 1.0);
 %image = imread('../images/signBoard.jpg');
 
 tic
@@ -32,7 +32,7 @@ toc
 % Components
 compIds = unique(components(:));
 
-drawImage = image;
+drawImage = components(:,:,[1 1 1]);%image;
 % For each component, excluding zero
 for i = 1:length(compIds)-1
     rowRange = bboxes(i,1):bboxes(i,2);

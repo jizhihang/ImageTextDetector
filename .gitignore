@@ -38,3 +38,6 @@ MSRA/
 
 # Output folder
 output/*
+
+# Scrap matlab file.
+src/scrap.m
