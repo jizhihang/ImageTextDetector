@@ -9,12 +9,12 @@ addpath(genpath('utils'));
 %image = imread(sprintf('../images/rectangles/%02d.png', imgId));
 
 %image = imread('../images/testImage.jpg');
-%image = imresize(imread('../images/beachPark.jpg'), 0.25);
-image = imresize(imread('../Dataset/img_23.jpg'), 0.8);
+image = imresize(imread('../images/beachPark.jpg'), 0.4);
+%image = imresize(imread('../Dataset/img_121.jpg'), 0.8);
 %image = imread('../images/signBoard.jpg');
 
 tic
-swtImg = swtransform(image, false);
+swtImg = swtransform(image, true);
 toc
 %swtImg = swtransform(image(:, :, [1 1 1]));
 
