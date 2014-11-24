@@ -6,7 +6,8 @@
 
 # Image Library
 # Satwik
-Dataset/
+ICDAR/
+MSRA/
 
 # Precompiled Headers
 *.gch
