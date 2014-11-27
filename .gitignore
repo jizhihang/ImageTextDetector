@@ -7,7 +7,7 @@
 # Image Library
 # Satwik
 ICDAR/
-MSRA/
+MSRA-TD500/
 
 # Precompiled Headers
 *.gch

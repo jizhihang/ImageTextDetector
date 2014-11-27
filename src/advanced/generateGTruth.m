@@ -10,8 +10,11 @@ trainImgPath = '../../MSRA-TD500/train/%s';
 trainImgs = dir(sprintf(trainImgPath, '*.jpg'));
 
 noImgs = length(trainImgs);
+count = 1; % number of lines used for training
 
-for i = 1:5 %noImgs
+trainingData = {};
+
+for i = 1:noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
@@ -33,6 +36,7 @@ for i = 1:5 %noImgs
     centerPts = labels(:, 3:4)  + labels(:, 5:6) * 0.5;
 
     drawPts = [];
+    tic;
     for j = 1:size(centerPts, 1)
         % Angle of rotation
         angle =  -1 * labels(j, 7);
@@ -58,15 +62,33 @@ for i = 1:5 %noImgs
         % Extracting the subimage
         subImg = image(box(1):box(2), box(3):box(4), :);
 
-        % Get swt image and components
+        % Get swt image, components and component features
         swtImg = swtransform(subImg, false);
         rawComponents = connectedComponents(swtImg, 3.2);
-        components = filterComponents(swtImg, rawComponents);
+        [components, bboxes] = filterComponents(swtImg, rawComponents);
+        compFeat = evaluateComponentFeatures(subImg, swtImg, components, bboxes);
 
-        figure(1); imshow(subImg)
-        figure(2); imagesc(components)
-        pause(1)
+        % Saving the component and its features for a text
+        % Identifier
+        textline.imageName = trainImgs(i).name;
+        textline.id = i;
+
+        textline.swtImg = swtImg;
+        textline.rawComponents = rawComponents;
+        textline.components = components; 
+        textline.bboxes = bboxes;
+        textline.compFeat = compFeat;
+
+        % Saving the component features
+        trainingData{count} = textline;
+        count = count + 1;
+        %figure(1); imagesc(components)
+        %figure(2); imagesc(rawComponents)
+        %pause(1)
     end
+
+    time= toc;
+    fprintf('Training : %d / %d in %f sec\n', i, noImgs, time);
 
     if visualize
         drawImage = step(centerMarker, drawImage, uint32(centerPts));
@@ -76,3 +98,5 @@ for i = 1:5 %noImgs
         pause(3);
     end
 end
+
+save('trainingData.mat', 'trainingData');

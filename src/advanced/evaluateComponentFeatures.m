@@ -41,7 +41,7 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
         colRange = bboxes(i,3):bboxes(i,4);
 
         comp = components(rowRange, colRange);
-        swtComp = swtImg(rowRange, colRange) .* (comp == i);
+        swtComp = swtImage(rowRange, colRange) .* (comp == i);
         gradComp = imgrad(rowRange, colRange);
         chars = getComponentCharacteristics(swtComp, bboxes(i, :));
         % Get the component contour by dilating the component and
