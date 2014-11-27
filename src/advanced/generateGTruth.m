@@ -61,10 +61,11 @@ for i = 1:5 %noImgs
         % Get swt image and components
         swtImg = swtransform(subImg, false);
         rawComponents = connectedComponents(swtImg, 3.2);
+        components = filterComponents(swtImg, rawComponents);
 
         figure(1); imshow(subImg)
-        figure(2); imagesc(rawComponents)
-        pause()
+        figure(2); imagesc(components)
+        pause(1)
     end
 
     if visualize
