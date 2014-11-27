@@ -58,7 +58,7 @@ for i = 1:noImgs
         end
 
         % Bounding box for the component (minRow, maxRow, minCol, maxCol) format
-        box = floor([min(corners(:,2)), max(corners(:,2)), min(corners(:,1)), max(corners(:, 1))]);
+        box = ceil([min(corners(:,2)), max(corners(:,2)), min(corners(:,1)), max(corners(:, 1))]);
         % Extracting the subimage
         subImg = image(box(1):box(2), box(3):box(4), :);
 
