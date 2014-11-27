@@ -10,11 +10,14 @@ trainImgPath = '../../MSRA-TD500/train/%s';
 trainImgs = dir(sprintf(trainImgPath, '*.jpg'));
 
 noImgs = length(trainImgs);
-count = 1; % number of lines used for training
+%count = 1; % number of lines used for training
 
-trainingData = {};
+% Parfor cannot save/write independently
+trainingData = cell(noImgs, 1);
+textline = cell(noImgs, 1);
+count = ones(noImgs, 1);
 
-for i = 1:noImgs
+parfor i = 1:12%noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
@@ -70,18 +73,18 @@ for i = 1:noImgs
 
         % Saving the component and its features for a text
         % Identifier
-        textline.imageName = trainImgs(i).name;
-        textline.id = i;
+        textline{i}.imageName = trainImgs(i).name;
+        textline{i}.id = i;
 
-        textline.swtImg = swtImg;
-        textline.rawComponents = rawComponents;
-        textline.components = components; 
-        textline.bboxes = bboxes;
-        textline.compFeat = compFeat;
+        textline{i}.swtImg = swtImg;
+        textline{i}.rawComponents = rawComponents;
+        textline{i}.components = components; 
+        textline{i}.bboxes = bboxes;
+        textline{i}.compFeat = compFeat;
 
         % Saving the component features
-        trainingData{count} = textline;
-        count = count + 1;
+        trainingData{i}{count(i)} = textline{i};
+        count(i) = count(i) + 1;
         %figure(1); imagesc(components)
         %figure(2); imagesc(rawComponents)
         %pause(1)
@@ -99,4 +102,10 @@ for i = 1:noImgs
     end
 end
 
+% Merging the training data
+mergedTrainingData = {};
+for i = 1:noImgs
+    mergedTrainingData = [mergedTrainingData, trainingData{i}];
+end
+trainingData = mergedTrainingData;
 save('trainingData.mat', 'trainingData');
