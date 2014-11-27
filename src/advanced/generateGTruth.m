@@ -6,7 +6,7 @@ addpaths;
 visualize = false;
 
 % Reading the images in the training folder
-trainImgPath = '../../MSRA/train/%s';
+trainImgPath = '../../MSRA-TD500/train/%s';
 trainImgs = dir(sprintf(trainImgPath, '*.jpg'));
 
 noImgs = length(trainImgs);
