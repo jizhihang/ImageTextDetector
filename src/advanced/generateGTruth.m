@@ -17,7 +17,7 @@ trainingData = cell(noImgs, 1);
 textline = cell(noImgs, 1);
 count = ones(noImgs, 1);
 
-for i = 1:noImgs
+parfor i = 1:noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);

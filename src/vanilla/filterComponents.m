@@ -41,9 +41,8 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
 
         % Ignoring this part, check NOTE below
         % Discard if the variance is too large
-        %if(varWidth > varianceMeanRatio * meanWidth)
-        if (varWidth > meanWidth)
-            continue;
+        if(varWidth > varianceMeanRatio * meanWidth)
+            %continue;
         end
 
         % Extract the bounding box
