@@ -17,13 +17,20 @@ trainingData = cell(noImgs, 1);
 textline = cell(noImgs, 1);
 count = ones(noImgs, 1);
 
-parfor i = 1:12%noImgs
+parfor i = 1:noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
 
     % Reading the ground truth for the image
     trainLabelPath = strrep(imagePath, '.JPG', '.gt');
+
+    % Checking if the file is empty and skipping it if it is
+    fileData = dir(trainLabelPath);
+    if(fileData.bytes == 0)
+        continue;
+    end
+
     labels = dlmread(trainLabelPath);
 
     % Visualizing the bounding boxes 
