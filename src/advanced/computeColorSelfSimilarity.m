@@ -16,7 +16,7 @@ function[meanSimilarity] = computeColorSelfSimilarity(image, components, chain)
 
     % Dividing 0-255 into 10 equal histgrams
     noBins = 10;
-    histExt = linspace(0, 255 , noBins-1);
+    histExt = linspace(0, 255 , noBins+1);
     histCenters = (histExt(1:end-1) + histExt(2:end)) * 0.5;
 
     noComps = length(chain);
@@ -27,13 +27,11 @@ function[meanSimilarity] = computeColorSelfSimilarity(image, components, chain)
 
         % For each channel
         for j = 1:3
-            channel = image(:, :, j);
-            histogram = hist(channel, histCenters);
-            disp(i);
-            disp(size(histogram));
-            t = featureVectors(i,:);
-            disp(size(featureVectors));
-            featureVectors(i, :) = [featureVectors(i, :), histogram];
+            imageChannel = image(:,:,j);
+            channel = imageChannel(compMembers);
+            histogram = hist(channel(:), histCenters);
+            indices = (j-1)*noBins+1:j*noBins;
+            featureVectors(i, indices) = histogram;
         end
 
         % Normalizing by the number of members in the component

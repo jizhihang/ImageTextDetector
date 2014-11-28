@@ -47,37 +47,41 @@ function chainFeat = evaluateChainFeatures(image, components,...
         chainFeatStruct.avgStructureSimilarity = avgStructureSimilarity;
 
         % Average turning angle and distance variation.
-        distances = zeros(length(Chain) - 1);
+        distances = zeros(1, length(chain) - 1);
         avgTurningAngle = 0;
         for cIdx=1:length(chain)-1
             angle = angles(chain(cIdx), chain(cIdx+1));
             avgTurningAngle = avgTurningAngle + angle;
-            center1 = compFeat(chain(cIdx));
-            center2 = compFeat(chain(cIdx+1));
+            compFeat1 = compFeat{chain(cIdx)};
+            compFeat2 = compFeat{chain(cIdx+1)};
+            center1 = compFeat1.center;
+            center2 = compFeat2.center;
             diff = center1 - center2;
             distances(cIdx) = hypot(diff(1), diff(2));
         end
-        chainFeatStruct.avgTurningAngle = avgTurningAngle/(size(chain)-1);
+        chainFeatStruct.avgTurningAngle = avgTurningAngle/(length(chain)-1);
         chainFeatStruct.distVariation = var(distances);
         
         % Size, axialratio, density, width variation and directions.
-        sizes = zeros(length(chain));
-        directions = zeros(length(chain));
+        sizes = zeros(1, length(chain));
+        directions = zeros(1, length(chain));
         avgAxialRatio = 0;
         avgDensity = 0;
         avgWidthVariation = 0;
         for cIdx = 1:length(chain)
-            sizes(cIdx) = compFeat{cIdx}.size;
+            sizes(cIdx) = compFeat{cIdx}.radius;
             avgAxialRatio = avgAxialRatio + compFeat{cIdx}.AxialRatio;
             avgDensity = avgDensity + compFeat{cIdx}.density;
             avgWidthVariation = avgWidthVariation + ...
                 compFeat{cIdx}.widthVariation;
             directions(cIdx) = compFeat{cIdx}.direction;
         end
+        disp(distances); disp(sizes);
         chainFeatStruct.sizeVariation = var(sizes);
         chainFeatStruct.directionBias = var(directions);
         chainFeatStruct.avgAxialRatio = avgAxialRatio/length(chain);
         chainFeatStruct.avgDensity = avgDensity/length(chain);
         chainFeatStruct.avgWidthVariation = avgWidthVariation/length(chain);
+        chainFeat{idx} = chainFeatStruct;
     end
 end

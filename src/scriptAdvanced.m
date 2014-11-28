@@ -47,6 +47,11 @@ toc
 tic
 chains = pruneSmallChains(chains, chainbboxes);
 toc
+
+% Get component features.
+compFeat = evaluateComponentFeatures(signImg, swtImg, components, bboxes);
+probabilities = ones(1,numel(compFeat));
+chainFeat = evaluateChainFeatures(signImg, components, chains, compFeat, probabilities, angles);
 return;
 % Color the components.
 color_idx = 1;
