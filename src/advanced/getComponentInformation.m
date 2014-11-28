@@ -9,7 +9,6 @@ function compInfoStruct = getComponentInformation(compIm, compMap, chars,...
     % First template is simple, it is the circle formed by the
     % characteristic radius.
     [x, y] = meshgrid(1:xdim, 1:ydim);
-    disp(chars)
     x = x - chars.relCenter(1); y = y - chars.relCenter(2);
     templatePoints = find(x.^2 + y.^2 <= chars.charRadius^2);
     
