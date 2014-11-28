@@ -87,8 +87,8 @@ parfor i = 1:noImgs
             textline{i}.id = i;
 
             textline{i}.swtImg = swtImg;
-            textline{i}.rawComponents = rawComponents;
-            textline{i}.components = components; 
+            textline{i}.rawComponents = uint8(rawComponents);
+            textline{i}.components = uint8(components); 
             textline{i}.bboxes = bboxes;
             textline{i}.compFeat = compFeat;
 

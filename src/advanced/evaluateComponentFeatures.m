@@ -25,8 +25,8 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
     %           .bbox: Bounding box of the component.
     %           .size: Characteristic radius of the component.
     %           .center: Center of the component.
-    %           .direction: Major orientation of the component.
-    %           .id: Unique ID of the component.
+    %           .direction: Majore orientation of the component.
+    %           .meanWidth : Mean stroke width of the component
     
     compIds = unique(components);
     % Get the gray scale image
@@ -67,7 +67,6 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
         compInfoStruct = getComponentInformation(compMap, chars, ...
                                                  gradContour, gradComp, ...
                                                  swtComp, bboxes(i,:));
-        compInfoStruct.id = i;
         compFeat{i} = compInfoStruct;
     end
 end
