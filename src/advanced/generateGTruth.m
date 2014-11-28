@@ -213,4 +213,8 @@ for i = 1:noImgs
 end
 negData = mergedTrainingData;
 
+<<<<<<< HEAD
 %save('trainingData.mat', 'posData', 'negData');
+=======
+save('trainingData20.mat', 'posData', 'negData');
+>>>>>>> 60023c97ff36b44c6e3209c9315bebba6404cc50

@@ -17,7 +17,7 @@
     trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
     
     % Loading the dumped data for training
-    load(fullfile(trainingPath, 'trainingData.mat'));
+    load(fullfile(trainingPath, 'trainingData20.mat'));
     fprintf('Training data loaded\n');
     % First augment and create dataX and dataY
     % dataX = Feature vector (Nobs x Nfeats)
@@ -121,9 +121,9 @@
         % Takes in image, components, chains, compFeat, compProbabilities
         iterImage = image(box(1) : box(2), box(3):box(4), :);
         iterComponents = posData{i}.components;
-        noComps = length(iterComponents);
-        iterChains = {1:noComps};
         iterCompFeat = posData{i}.compFeat;
+        iterChains = {1:numel(iterCompFeat)};
+        noComps = numel(iterCompFeat);
         iterProbabilities = trainingProb(compCount:(compCount + noComps -1), 2);
         compCount = compCount + noComps;
         
@@ -148,9 +148,9 @@
         % Takes in image, components, chains, compFeat, compProbabilities
         iterImage = image(box(1) : box(2), box(3):box(4), :);
         iterComponents = negData{i}.components;
-        noComps = length(iterComponents);
-        iterChains = {1:noComps}; 
         iterCompFeat = negData{i}.compFeat;
+        noComps = numel(iterCompFeat);
+        iterChains = {1:noComps};
         iterProbabilities = trainingProb(compCount:(compCount + noComps -1), 2);
         compCount = compCount + noComps;
         
