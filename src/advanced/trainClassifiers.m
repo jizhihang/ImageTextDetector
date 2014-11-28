@@ -14,11 +14,11 @@
     % componentModel = Random forest classifier for components
     % chainModel = Random forest classifier for chains
     
-    trainingPath = '../../../'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
+    trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
     
     % Loading the dumped data for training
     load(fullfile(trainingPath, 'trainingData.mat'));
-    
+    fprintf('Training data loaded\n');
     % First augment and create dataX and dataY
     % dataX = Feature vector (Nobs x Nfeats)
     % dataY = labels for supervised learning
