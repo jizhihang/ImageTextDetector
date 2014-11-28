@@ -1,7 +1,6 @@
-function chainFeat = evaluateChainFeatures(chains, compFeat,...
-                                           compProbabilities, angles,...
-                                           colorSimilarity, ...
-                                           structureSimilarity)
+function chainFeat = evaluateChainFeatures(image, components,...
+                                           chains, compFeat,...
+                                           compProbabilities, angles)
     % Function to evaluate the chain level features of an image. Function
     % returns an Array of struct containing the features of each chain
     % which will be used for training a random forest classifier in the
@@ -9,7 +8,10 @@ function chainFeat = evaluateChainFeatures(chains, compFeat,...
     % phase.
     %
     % Inputs:
-    %       chains: Struct of 1-D arrays containing the components which
+    %       image: Input image.
+    %       components: 2D array of the same size as image which contains 
+    %           component ID per each component.
+    %       chains: Struct of 1-D arrays containing the component IDs which
     %           belong to a chain.
     %       compFeat: See evaluateComponentFeatures.
     %       compProbabilities: Probability of each component of it
@@ -17,10 +19,6 @@ function chainFeat = evaluateChainFeatures(chains, compFeat,...
     %           forest classifier at the component level.
     %       angles: 2D array containing the included angle for each pair of
     %           components.
-    %       colorSimilarity: 2D array containing color similarity for each
-    %           pair of components.
-    %       structureSimilarity: 2D array containing structure similarity
-    %       for each pair of components.
     %
     % Output:
     %       % Will be filled later.
@@ -32,23 +30,27 @@ function chainFeat = evaluateChainFeatures(chains, compFeat,...
         chain = chains{idx};
         
         % Number of candidates per chain.
-        chainFeatStruct.nComp = size(chain});
+        chainFeatStruct.nComp = length(chain);
         
         % Average probability of the candidates belonging to the chain.
         chainFeatStruct.avgProbability = ...
             mean(compProbabilities(chain));
-        
+
+        % Average color self similarity of the chain.
+        avgColorSimilarity = computerColorSelfSimilarity(image,...
+                                    components, chain);
+        chainFeatStruct.avgColorSimilarity = avgColorSimilarity;
+
+        % Average structure self similarity of the chain.
+        avgStructureSimilarity = computerStructuresimilarity(image,...
+                                    compFeat, chain);
+        chainFeatStruct.avgStructureSimilarity = avgStructureSimilarity;
+
         % Average turning angle and distance variation.
         distances = zeros(length(Chain) - 1);
         avgTurningAngle = 0;
-        avgColorSimilarity = 0;
-        avgStructureSimilarity = 0;
         for cIdx=1:length(chain}-1
             angle = angles(chain(cIdx), chain(cIdx+1));
-            cSim = colorSimilarity(chain(cIdx), chain(cIdx+1));
-            sSim = structureSimilarity(chain(cIdx), chain(cIdx+1));
-            avgColorSimilarity = avgColorSimilarity + cSim;
-            avgStructureSimilarity = avgStructureSimilarity + sSim;
             avgTurningAngle = avgTurningAngle + angle;
             center1 = compFeat(chain(cIdx));
             center2 = compFeat(chain(cIdx+1));
@@ -56,10 +58,6 @@ function chainFeat = evaluateChainFeatures(chains, compFeat,...
             distances(cIdx) = hypot(diff(1), diff(2));
         end
         chainFeatStruct.avgTurningAngle = avgTurningAngle/(size(chain)-1);
-        chainFeatStruct.avgColorSimilarity = ...
-            avgColorSimilarity/(size(chain)-1);
-        chainFeatStruct.avgStructureSimilarity = ...
-            avgStructureSimilarity/(size(chain)-1);
         chainFeatStruct.distVariation = var(distances);
         
         % Size, axialratio, density, width variation and directions.
