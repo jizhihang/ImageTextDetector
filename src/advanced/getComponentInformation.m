@@ -85,6 +85,7 @@ function compInfoStruct = getComponentInformation(compMap, chars,...
     compInfoStruct.occupationRatio = occupationRatio;
     compInfoStruct.AxialRatio = chars.majorAxis/chars.minorAxis;
     compInfoStruct.widthVariation = mean(swtComp(:))/sqrt(var(swtComp(:)));
+    compInfoStruct.meanWidth = mean(swtComp(:));
     compInfoStruct.density = sum(compMap(:))/(pi*chars.charRadius^2);
     compInfoStruct.bbox = bbox;
     compInfoStruct.size = chars.charRadius;
