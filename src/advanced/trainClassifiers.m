@@ -122,7 +122,7 @@
         iterImage = image(box(1) : box(2), box(3):box(4), :);
         iterComponents = posData{i}.components;
         noComps = length(iterComponents);
-        iterChains = 1:noComps;
+        iterChains = {1:noComps};
         iterCompFeat = posData{i}.compFeat;
         iterProbabilities = trainingProb(compCount:(compCount + noComps -1), 2);
         compCount = compCount + noComps;
@@ -149,7 +149,7 @@
         iterImage = image(box(1) : box(2), box(3):box(4), :);
         iterComponents = negData{i}.components;
         noComps = length(iterComponents);
-        iterChains = 1:noComps;
+        iterChains = {1:noComps}; 
         iterCompFeat = negData{i}.compFeat;
         iterProbabilities = trainingProb(compCount:(compCount + noComps -1), 2);
         compCount = compCount + noComps;
