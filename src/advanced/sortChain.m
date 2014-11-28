@@ -12,7 +12,6 @@ function sortedChain = sortChain(chain, compFeat)
     nMembers = length(chain);
     Y = zeros(nMembers, 1);
     X = zeros(nMembers, 1);
-
     for idx=1:nMembers
         component = compFeat{chain(idx)};
         center = component.center;

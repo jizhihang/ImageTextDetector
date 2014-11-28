@@ -24,7 +24,7 @@ function[meanSimilarity] = computeColorSelfSimilarity(image, components, chain)
     % Get color self similarity feature for each component
     for i = 1:noComps
         compMembers = find(components == chain(i));
-
+        disp(size(components));
         % For each channel
         for j = 1:3
             imageChannel = image(:,:,j);
