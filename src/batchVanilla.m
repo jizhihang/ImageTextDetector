@@ -11,6 +11,7 @@ imageList = dir('../Dataset/');
 
 for nIdx=3:1:numel(imageList)
     fprintf('Processing %s\n', imageList(nIdx).name);
+    tic;
     image = imresize(imread(sprintf('../Dataset/%s',imageList(nIdx).name)), 0.5);
 
     % Perform the positive ray operations.
@@ -77,4 +78,6 @@ for nIdx=3:1:numel(imageList)
                                     ocrOutput.Words);
     % Save the image.
     imwrite(ocrImg, sprintf('output/%s', imageList(nIdx).name));
+    finishedTime = toc;
+    fprintf('Time taken = %f\n', finishedTime);
 end

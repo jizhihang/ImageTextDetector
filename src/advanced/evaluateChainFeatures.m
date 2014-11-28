@@ -1,6 +1,6 @@
-function chainFeat = evaluateChainFeatures(image, components,...
+function chainFeat = evaluateChainFeaturesp(image, components,...
                                            chains, compFeat,...
-                                           compProbabilities, angles)
+                                           compProbabilities)
     % Function to evaluate the chain level features of an image. Function
     % returns an Array of struct containing the features of each chain
     % which will be used for training a random forest classifier in the
@@ -17,8 +17,6 @@ function chainFeat = evaluateChainFeatures(image, components,...
     %       compProbabilities: Probability of each component of it
     %           belonging to a text word. This is obtained from the random
     %           forest classifier at the component level.
-    %       angles: 2D array containing the included angle for each pair of
-    %           components.
     %
     % Output:
     %       % Will be filled later.
@@ -28,6 +26,9 @@ function chainFeat = evaluateChainFeatures(image, components,...
     % Run the iteration for each chain
     for idx=1:1:numel(chains)
         chain = chains{idx};
+
+        % Sort the chain
+        chain = sortChain(chain,compFeat);
         
         % Number of candidates per chain.
         chainFeatStruct.nComp = length(chain);
@@ -50,12 +51,12 @@ function chainFeat = evaluateChainFeatures(image, components,...
         distances = zeros(1, length(chain) - 1);
         avgTurningAngle = 0;
         for cIdx=1:length(chain)-1
-            angle = angles(chain(cIdx), chain(cIdx+1));
-            avgTurningAngle = avgTurningAngle + angle;
             compFeat1 = compFeat{chain(cIdx)};
             compFeat2 = compFeat{chain(cIdx+1)};
             center1 = compFeat1.center;
             center2 = compFeat2.center;
+            angle = atan2(center2(2)-center1(2), center2(1)-center1(1));
+            avgTurningAngle = avgTurningAngle + angle;
             diff = center1 - center2;
             distances(cIdx) = hypot(diff(1), diff(2));
         end
@@ -76,7 +77,6 @@ function chainFeat = evaluateChainFeatures(image, components,...
                 compFeat{cIdx}.widthVariation;
             directions(cIdx) = compFeat{cIdx}.direction;
         end
-        disp(distances); disp(sizes);
         chainFeatStruct.sizeVariation = var(sizes);
         chainFeatStruct.directionBias = var(directions);
         chainFeatStruct.avgAxialRatio = avgAxialRatio/length(chain);
