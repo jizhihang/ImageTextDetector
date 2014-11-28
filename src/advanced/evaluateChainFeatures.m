@@ -37,19 +37,19 @@ function chainFeat = evaluateChainFeatures(image, components,...
             mean(compProbabilities(chain));
 
         % Average color self similarity of the chain.
-        avgColorSimilarity = computerColorSelfSimilarity(image,...
+        avgColorSimilarity = computeColorSelfSimilarity(image,...
                                     components, chain);
         chainFeatStruct.avgColorSimilarity = avgColorSimilarity;
 
         % Average structure self similarity of the chain.
-        avgStructureSimilarity = computerStructuresimilarity(image,...
+        avgStructureSimilarity = computeStructureSimilarity(image,...
                                     compFeat, chain);
         chainFeatStruct.avgStructureSimilarity = avgStructureSimilarity;
 
         % Average turning angle and distance variation.
         distances = zeros(length(Chain) - 1);
         avgTurningAngle = 0;
-        for cIdx=1:length(chain}-1
+        for cIdx=1:length(chain)-1
             angle = angles(chain(cIdx), chain(cIdx+1));
             avgTurningAngle = avgTurningAngle + angle;
             center1 = compFeat(chain(cIdx));

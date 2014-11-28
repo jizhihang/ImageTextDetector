@@ -29,7 +29,11 @@ function[meanSimilarity] = computeColorSelfSimilarity(image, components, chain)
         for j = 1:3
             channel = image(:, :, j);
             histogram = hist(channel, histCenters);
-            featureVectors(i, :) = [featuresVectors(i, :), histogram];
+            disp(i);
+            disp(size(histogram));
+            t = featureVectors(i,:);
+            disp(size(featureVectors));
+            featureVectors(i, :) = [featureVectors(i, :), histogram];
         end
 
         % Normalizing by the number of members in the component

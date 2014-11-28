@@ -69,6 +69,7 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
         compInfoStruct = getComponentInformation(compIm, compMap, chars, ...
                                                  gradContour, gradComp, ...
                                                  swtComp, bboxes(i,:));
+        compInfoStruct.compID = i;
         compFeat{i} = compInfoStruct;
     end
 end

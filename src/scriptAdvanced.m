@@ -39,7 +39,7 @@ toc
 
 recImage = drawComponentPairs(annotatedImage, groupedComponents, bboxes);
 figure; imshow(recImage)
-return;
+
 tic
 [chains, chainbboxes] = createChains(groupedComponents, angles, bboxes);
 toc
@@ -47,7 +47,7 @@ toc
 tic
 chains = pruneSmallChains(chains, chainbboxes);
 toc
-
+return;
 % Color the components.
 color_idx = 1;
 chained_components = zeros(size(components));
