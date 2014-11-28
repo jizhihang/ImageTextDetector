@@ -13,9 +13,11 @@ noImgs = length(trainImgs);
 %count = 1; % number of lines used for training
 
 % Parfor cannot save/write independently
-trainingData = cell(noImgs, 1);
+posData = cell(noImgs, 1);
+negData = cell(noImgs, 1);
 textline = cell(noImgs, 1);
-count = ones(noImgs, 1);
+posCount = ones(noImgs, 1);
+negCount = ones(noImgs, 1);
 
 parfor i = 1:noImgs
     % Reading each image
@@ -76,6 +78,31 @@ parfor i = 1:noImgs
             subImg = image(box(1):box(2), box(3):box(4), :);
 
             % Get swt image, components and component features
+            swtImg = swtransform(subImg, true);
+            rawComponents = connectedComponents(swtImg, 3.2);
+            [components, bboxes] = filterComponents(swtImg, rawComponents);
+            compFeat = evaluateComponentFeatures(subImg, swtImg, components, bboxes);
+
+            % Saving the component and its features for a text
+            % Identifier
+            textline{i}.imageName = trainImgs(i).name;
+            textline{i}.id = i;
+
+            textline{i}.swtImg = swtImg;
+            textline{i}.rawComponents = uint8(rawComponents);
+            textline{i}.components = uint8(components); 
+            textline{i}.bboxes = bboxes;
+            textline{i}.compFeat = compFeat;
+
+            % Saving the component features
+            posData{i}{posCount(i)} = textline{i};
+            posCount(i) = posCount(i) + 1;
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Other direction of the gradient
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            % Get swt image, components and component features
             swtImg = swtransform(subImg, false);
             rawComponents = connectedComponents(swtImg, 3.2);
             [components, bboxes] = filterComponents(swtImg, rawComponents);
@@ -93,8 +120,67 @@ parfor i = 1:noImgs
             textline{i}.compFeat = compFeat;
 
             % Saving the component features
-            trainingData{i}{count(i)} = textline{i};
-            count(i) = count(i) + 1;
+            posData{i}{posCount(i)} = textline{i};
+            posCount(i) = posCount(i) + 1;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Generating negative training examples
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % randomly taking a sub image
+            minRow = randi([1, size(image,1) - (box(2) - box(1) + 1)]);
+            minCol = randi([1, size(image,2) - (box(4) - box(3) + 1)]);
+            
+            subImg = image(minRow:(minRow + box(2) - box(1)), ...
+                    minCol:(minCol + box(2) - box(1)), :);
+            
+            swtImg = swtransform(subImg, true);
+            rawComponents = connectedComponents(swtImg, 3.2);
+            [components, bboxes] = filterComponents(swtImg, rawComponents);
+            compFeat = evaluateComponentFeatures(subImg, swtImg, components, bboxes);
+
+            % Saving the component and its features for a text
+            % Identifier
+            textline{i}.imageName = trainImgs(i).name;
+            textline{i}.id = i;
+
+            textline{i}.swtImg = swtImg;
+            textline{i}.rawComponents = uint8(rawComponents);
+            textline{i}.components = uint8(components); 
+            textline{i}.bboxes = bboxes;
+            textline{i}.compFeat = compFeat;
+
+            % Saving the component features
+            negData{i}{negCount(i)} = textline{i};
+            negCount(i) = negCount(i) + 1;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            minRow = randi([1, size(image,1) - (box(2) - box(1) + 1)]);
+            minCol = randi([1, size(image,2) - (box(4) - box(3) + 1)]);
+            
+            subImg = image(minRow:(minRow + box(2) - box(1)), ...
+                    minCol:(minCol + box(2) - box(1)), :);
+            
+            swtImg = swtransform(subImg, false);
+            rawComponents = connectedComponents(swtImg, 3.2);
+            [components, bboxes] = filterComponents(swtImg, rawComponents);
+            compFeat = evaluateComponentFeatures(subImg, swtImg, components, bboxes);
+
+            % Saving the component and its features for a text
+            % Identifier
+            textline{i}.imageName = trainImgs(i).name;
+            textline{i}.id = i;
+
+            textline{i}.swtImg = swtImg;
+            textline{i}.rawComponents = uint8(rawComponents);
+            textline{i}.components = uint8(components); 
+            textline{i}.bboxes = bboxes;
+            textline{i}.compFeat = compFeat;
+
+            % Saving the component features
+            negData{i}{negCount(i)} = textline{i};
+            negCount(i) = negCount(i) + 1;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %figure(1); imagesc(components)
             %figure(2); imagesc(rawComponents)
             %pause(1)
@@ -116,7 +202,14 @@ end
 % Merging the training data
 mergedTrainingData = {};
 for i = 1:noImgs
-    mergedTrainingData = [mergedTrainingData, trainingData{i}];
+    mergedTrainingData = [mergedTrainingData, posData{i}];
 end
-trainingData = mergedTrainingData;
-save('trainingData.mat', 'trainingData');
+posData = mergedTrainingData;
+
+mergedTrainingData = {};
+for i = 1:noImgs
+    mergedTrainingData = [mergedTrainingData, negData{i}];
+end
+negData = mergedTrainingData;
+
+save('trainingData.mat', 'posData', 'negData');

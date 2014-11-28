@@ -86,7 +86,7 @@ function[members, clusterImg] = clusterIntoChains(compFeatures, components)
         end
 
         % Merging these two chains
-        fprintf('Merging two chains : %d %d (sim: %f)\n', chain1, chain2, maxVal);
+        %fprintf('Merging two chains : %d %d (sim: %f)\n', chain1, chain2, maxVal);
         mergedComps = [chain1, chain2];
 
         % Removing them from similarity matrix; clubbing them as last element; computing new similarities
