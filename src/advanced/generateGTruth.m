@@ -7,7 +7,7 @@ visualize = false;
 
 % Reading the images in the training folder
 trainImgPath = '../../MSRA-TD500/train/%s';
-trainImgs = dir(sprintf(trainImgPath, '*.jpg'));
+trainImgs = dir(sprintf(trainImgPath, '*.JPG'));
 
 noImgs = length(trainImgs);
 %count = 1; % number of lines used for training
@@ -19,7 +19,7 @@ textline = cell(noImgs, 1);
 posCount = ones(noImgs, 1);
 negCount = ones(noImgs, 1);
 
-parfor i = 1:100%noImgs
+for i = 1:2%noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
@@ -213,4 +213,4 @@ for i = 1:noImgs
 end
 negData = mergedTrainingData;
 
-save('trainingData.mat', 'posData', 'negData');
+%save('trainingData.mat', 'posData', 'negData');

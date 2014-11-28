@@ -5,12 +5,16 @@ addpath(genpath('advanced'));
 addpath(genpath('lib'));
 addpath(genpath('utils'));
 
+% Load the model for components and chain random forests
+% Loads componentModel and chainModel
+%load('models.mat');
+
 % Load image.
-signImg = imresize(imread('../Dataset/img_23.jpg'), 0.5);
+image = imresize(imread('../Dataset/img_23.jpg'), 0.5);
 
 % Get Stroke Width Transform.
 tic
-swtImg = swtransform(signImg, true);
+swtImg = swtransform(image, true);
 toc
 
 % Get connected components.
@@ -23,18 +27,27 @@ tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
 
+% Eliminating components based on the random tree model
+[components, bboxes] = pruneComponents(image, swtImg, components, bboxes, componentModel);
+
 % Debug.
-annotatedImage = annotateComponents(signImg, components);
+annotatedImage = annotateComponents(image, components);
 figure; imshow(annotatedImage);
 
 % Get component features.
 tic
-compFeat = evaluateComponentFeatures(signImg, swtImg, components, bboxes);
+[compFeat, compProbabilities] = evaluateComponentFeatures(image, swtImg, components, bboxes);
 toc
 
 % Get chains using heirarchical clustering.
 tic
 [members, clusterImg] = clusterChains(compFeat, components);
+toc
+
+% Weeding out unecessarily using random forests
+tic
+members = pruneChains(image, components, members, compFeat,...
+                            compProbabilities, chainModel);
 toc
 
 figure; imagesc(clusterImg);
