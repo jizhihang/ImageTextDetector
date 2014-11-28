@@ -18,7 +18,7 @@
     
     % Loading the dumped data for training
     load(fullfile(trainingPath, 'trainingData.mat'));
-    
+    fprintf('Training data loaded\n');
     % First augment and create dataX and dataY
     % dataX = Feature vector (Nobs x Nfeats)
     % dataY = labels for supervised learning
