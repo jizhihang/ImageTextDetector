@@ -11,7 +11,7 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
     %       component numbers for each component.
     %       bboxes: Bounding boxes for each component.
     %
-    %Output:
+    % Output:
     %   compFeat: Cell of structs with the following entries:
     %           .contourShape: HoG for the contour of the component.
     %           .edgeShape: HoG for the component.
@@ -23,10 +23,11 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
     %           .density: Ratio of number of foreground pixels to
     %               characteristic area of the component.
     %           .bbox: Bounding box of the component.
-    %           .size: Characteristic radius of the component.
+    %           .radius: Characteristic radius of the component.
     %           .center: Center of the component.
     %           .direction: Majore orientation of the component.
-    %           .meanWidth : Mean stroke width of the component
+    %           .meanWidth : Mean stroke width of the component.
+    %           .meanColor: Mean Lab color.
     
     compIds = unique(components);
     % Get the gray scale image
@@ -42,6 +43,7 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
         colRange = bboxes(i,3):bboxes(i,4);
 
         comp = components(rowRange, colRange);
+        compIm = image(rowRange, colRange, :);
         swtComp = swtImage(rowRange, colRange) .* (comp == i);
         gradComp = imgrad(rowRange, colRange);
         chars = getComponentCharacteristics(swtComp, bboxes(i, :));
@@ -64,7 +66,7 @@ function compFeat = evaluateComponentFeatures(image, swtImage, components, bboxe
         % Get the component information.
         compMap = zeros(size(compContour));
         compMap(comp == i) = 1;
-        compInfoStruct = getComponentInformation(compMap, chars, ...
+        compInfoStruct = getComponentInformation(compIm, compMap, chars, ...
                                                  gradContour, gradComp, ...
                                                  swtComp, bboxes(i,:));
         compFeat{i} = compInfoStruct;
