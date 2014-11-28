@@ -20,7 +20,7 @@ function[similarity] = computeChainSimilarity(chain1, chain2, compCharacteristic
     meanChain1 = meanChain1 / length(chain1);
 
     meanChain2 = 0;
-    for i = 1:length(chain1)
+    for i = 1:length(chain2)
         meanChain2 = meanChain2 + compCharacteristics{chain2(i)}.direction;
     end
     meanChain2 = meanChain2 / length(chain2);
