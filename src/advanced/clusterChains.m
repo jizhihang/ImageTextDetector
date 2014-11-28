@@ -1,4 +1,4 @@
-function[members, clusterImg] = clusterIntoChains(compFeatures, components)
+function[members, clusterImg] = clusterChains(compFeatures, components)
     % Function to cluster chains hierarchically using distance measures corresponding to
     % orientation and population metrics
     %

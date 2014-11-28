@@ -19,7 +19,7 @@ textline = cell(noImgs, 1);
 posCount = ones(noImgs, 1);
 negCount = ones(noImgs, 1);
 
-parfor i = 1:noImgs
+parfor i = 1:100%noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
