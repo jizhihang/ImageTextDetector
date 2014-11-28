@@ -24,6 +24,7 @@ toc
 tic
 rawComponents = connectedComponents(swtImg, 3.2);
 toc
+
 tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc

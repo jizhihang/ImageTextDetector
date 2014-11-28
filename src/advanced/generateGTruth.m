@@ -97,7 +97,6 @@ parfor i = 1:noImgs
             % Saving the component features
             posData{i}{posCount(i)} = textline{i};
             posCount(i) = posCount(i) + 1;
-            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Other direction of the gradient
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,11 +127,13 @@ parfor i = 1:noImgs
             % Generating negative training examples
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % randomly taking a sub image
-            minRow = randi([1, size(image,1) - (box(2) - box(1) + 1)]);
-            minCol = randi([1, size(image,2) - (box(4) - box(3) + 1)]);
+            %[1, size(image,1) - (box(2) - box(1) + 1)]
+            %[1, size(image,2) - (box(4) - box(3) + 1)]
+            minRow = randi([1, size(image,1) - (box(2) - box(1))]);
+            minCol = randi([1, size(image,2) - (box(4) - box(3))]);
             
             subImg = image(minRow:(minRow + box(2) - box(1)), ...
-                    minCol:(minCol + box(2) - box(1)), :);
+                    minCol:(minCol + box(4) - box(3)), :);
             
             swtImg = swtransform(subImg, true);
             rawComponents = connectedComponents(swtImg, 3.2);
@@ -154,11 +155,11 @@ parfor i = 1:noImgs
             negData{i}{negCount(i)} = textline{i};
             negCount(i) = negCount(i) + 1;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            minRow = randi([1, size(image,1) - (box(2) - box(1) + 1)]);
-            minCol = randi([1, size(image,2) - (box(4) - box(3) + 1)]);
+            minRow = randi([1, size(image,1) - (box(2) - box(1))]);
+            minCol = randi([1, size(image,2) - (box(4) - box(3))]);
             
             subImg = image(minRow:(minRow + box(2) - box(1)), ...
-                    minCol:(minCol + box(2) - box(1)), :);
+                    minCol:(minCol + box(4) - box(3)), :);
             
             swtImg = swtransform(subImg, false);
             rawComponents = connectedComponents(swtImg, 3.2);
