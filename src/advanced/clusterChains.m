@@ -21,7 +21,7 @@ function[members, clusterImg] = clusterChains(compFeatures, components)
     % Members for the first iteration are pairs of components that are compatible
     noComps = length(compFeatures);
     members = cell(0, 1);
-
+    
     % Count for number of members
     noMembers = 0;
     for i = 1:noComps-1
@@ -69,7 +69,6 @@ function[members, clusterImg] = clusterChains(compFeatures, components)
         end
     end
 
-    noIters = 2;
     % Previously merged components
     mergedComps = [];
     % For the current iteration of clustering
@@ -78,10 +77,10 @@ function[members, clusterImg] = clusterChains(compFeatures, components)
         triMatrix = triu(similarity);
         [maxVal, maxIndex] = max(triMatrix(:));
         [chain1, chain2] = ind2sub(size(similarity), maxIndex);
-
+        
         % Stop iterations if max similarity is less than a threshold
         if(maxVal < 0.1)
-            maxVal
+            %maxVal
             break;
         end
 
@@ -96,7 +95,7 @@ function[members, clusterImg] = clusterChains(compFeatures, components)
         similarity(:, minIndChain) = [];
         similarity(maxIndChain, :) = [];
         similarity(minIndChain, :) = [];
-
+        
         newChain = union(members{chain1}, members{chain2});
         members{maxIndChain} = {};
         members{minIndChain} = {};

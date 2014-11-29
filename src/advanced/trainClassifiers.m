@@ -1,4 +1,4 @@
-%function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath noTrees)
+function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath, noTrees)
     % This function trains classifiers for both components and chains
     %
     % Usage:
@@ -14,7 +14,7 @@
     % componentModel = Random forest classifier for components
     % chainModel = Random forest classifier for chains
     
-    trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
+    %trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
     
     % Loading the dumped data for training
     load(fullfile(trainingPath, 'trainingData20.mat'));
@@ -113,9 +113,12 @@
     compCount = 1;
     
     for i = 1:noChainsPos
+        fprintf('Chain features: %d / %d\n', i, noChainsPos);
         % Reading the corresponding image
         image = imread(fullfile(imagePath, posData{i}.imageName));
-        box = posData{i}.bboxes;
+        
+        % Bounding box for ground truth portion of the image
+        box = posData{i}.range;
         
         % Evaluation of chain features
         % Takes in image, components, chains, compFeat, compProbabilities
@@ -127,7 +130,7 @@
         iterProbabilities = trainingProb(compCount:(compCount + noComps -1), 2);
         compCount = compCount + noComps;
         
-        feature = evaluateChainFeatures(iterImage, iterComponents, ...
+        [~, feature] = evaluateChainFeatures(iterImage, iterComponents, ...
                         iterChains, iterCompFeat, iterProbabilities);
 
         % Adding it to the pool
@@ -142,7 +145,10 @@
     for i = 1:noChainsNeg
         % Reading the corresponding image
         image = imread(fullfile(imagePath, negData{i}.imageName));
-        box = negData{i}.bboxes;
+        
+        % Bounding box size of the corresponding sub image from which
+        % components were extracted
+        box = negData{i}.range;
         
         % Evaluation of chain features
         % Takes in image, components, chains, compFeat, compProbabilities
@@ -154,7 +160,7 @@
         iterProbabilities = trainingProb(compCount:(compCount + noComps -1), 2);
         compCount = compCount + noComps;
         
-        feature = evaluateChainFeatures(iterImage, iterComponents, ...
+        [~, feature] = evaluateChainFeatures(iterImage, iterComponents, ...
                         iterChains, iterCompFeat, iterProbabilities);
 
         % Adding it to the pool
@@ -171,5 +177,7 @@
     chainModel = TreeBagger(noTrees, XChains, YChains, ...
                     'Method', 'Classification');
     
-%end
+    % Saving the models
+    save('models.mat', 'componentModel', 'chainModel');
+end
 

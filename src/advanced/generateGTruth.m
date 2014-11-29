@@ -19,7 +19,7 @@ textline = cell(noImgs, 1);
 posCount = ones(noImgs, 1);
 negCount = ones(noImgs, 1);
 
-for i = 1:2%noImgs
+parfor i = 1:20%noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
@@ -93,6 +93,7 @@ for i = 1:2%noImgs
             textline{i}.components = uint8(components); 
             textline{i}.bboxes = bboxes;
             textline{i}.compFeat = compFeat;
+            textline{i}.range = box;
 
             % Saving the component features
             posData{i}{posCount(i)} = textline{i};
@@ -117,6 +118,7 @@ for i = 1:2%noImgs
             textline{i}.components = uint8(components); 
             textline{i}.bboxes = bboxes;
             textline{i}.compFeat = compFeat;
+            textline{i}.range = box;
 
             % Saving the component features
             posData{i}{posCount(i)} = textline{i};
@@ -150,6 +152,8 @@ for i = 1:2%noImgs
             textline{i}.components = uint8(components); 
             textline{i}.bboxes = bboxes;
             textline{i}.compFeat = compFeat;
+            textline{i}.range = [minRow, minRow + box(2) - box(1), ...
+                    minCol, minCol + box(4) - box(3)];
 
             % Saving the component features
             negData{i}{negCount(i)} = textline{i};
@@ -176,6 +180,8 @@ for i = 1:2%noImgs
             textline{i}.components = uint8(components); 
             textline{i}.bboxes = bboxes;
             textline{i}.compFeat = compFeat;
+            textline{i}.range = [minRow, minRow + box(2) - box(1), ...
+                    minCol, minCol + box(4) - box(3)];
 
             % Saving the component features
             negData{i}{negCount(i)} = textline{i};
@@ -213,8 +219,4 @@ for i = 1:noImgs
 end
 negData = mergedTrainingData;
 
-<<<<<<< HEAD
-%save('trainingData.mat', 'posData', 'negData');
-=======
 save('trainingData20.mat', 'posData', 'negData');
->>>>>>> 60023c97ff36b44c6e3209c9315bebba6404cc50

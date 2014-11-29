@@ -7,14 +7,15 @@ addpath(genpath('utils'));
 
 % Load the model for components and chain random forests
 % Loads componentModel and chainModel
-%load('models.mat');
+load('models.mat');
 
 % Load image.
-image = imresize(imread('../Dataset/img_23.jpg'), 0.5);
+image = imresize(imread('../ICDAR/img_23.jpg'), 0.25);
+%image = imresize(imread('../MSRA-TD500/train/IMG_0030.JPG') , 0.5);
 
 % Get Stroke Width Transform.
 tic
-swtImg = swtransform(image, true);
+swtImg = swtransform(image, false);
 toc
 
 % Get connected components.
@@ -27,17 +28,18 @@ tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
 
-% Eliminating components based on the random tree model
-[components, bboxes] = pruneComponents(image, swtImg, components, bboxes, componentModel);
+% Eliminating components based on the random tree model and features
+[newComps, bboxes, compProbs, compFeat] = pruneComponents(image, swtImg, components, bboxes, componentModel);
+
+% Debugging
+%figure; imagesc(components)
+%figure; imagesc(newComps)
+components = newComps;
 
 % Debug.
-annotatedImage = annotateComponents(image, components);
-figure; imshow(annotatedImage);
+%annotatedImage = annotateComponents(image, components);
+%figure; imshow(annotatedImage);
 
-% Get component features.
-tic
-[compFeat, compProbabilities] = evaluateComponentFeatures(image, swtImg, components, bboxes);
-toc
 
 % Get chains using heirarchical clustering.
 tic
@@ -46,11 +48,11 @@ toc
 
 % Weeding out unecessarily using random forests
 tic
-members = pruneChains(image, components, members, compFeat,...
-                            compProbabilities, chainModel);
+[members, clusterImg] = pruneChains(image, components, members, compFeat,...
+                            compProbs, chainModel);
 toc
-
 figure; imagesc(clusterImg);
+
 %% -------- Debug later ---------
 % Color the components.
 %color_idx = 1;
