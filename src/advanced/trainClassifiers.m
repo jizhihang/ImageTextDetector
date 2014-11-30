@@ -17,7 +17,7 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
     %trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
     
     % Loading the dumped data for training
-    load(fullfile(trainingPath, 'trainingData20.mat'));
+    load(fullfile(trainingPath, 'trainingDataAll.mat'));
     fprintf('Training data loaded\n');
     % First augment and create dataX and dataY
     % dataX = Feature vector (Nobs x Nfeats)
@@ -178,6 +178,6 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
                     'Method', 'Classification');
     
     % Saving the models
-    save('models.mat', 'componentModel', 'chainModel');
+    save('modelsAll.mat', 'componentModel', 'chainModel');
 end
 

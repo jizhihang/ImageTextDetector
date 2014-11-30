@@ -19,7 +19,7 @@ textline = cell(noImgs, 1);
 posCount = ones(noImgs, 1);
 negCount = ones(noImgs, 1);
 
-parfor i = 1:20%noImgs
+parfor i = 1:noImgs
     % Reading each image
     imagePath = sprintf(trainImgPath, trainImgs(i).name);
     image = imread(imagePath);
@@ -219,4 +219,4 @@ for i = 1:noImgs
 end
 negData = mergedTrainingData;
 
-save('trainingData20.mat', 'posData', 'negData');
+save('trainingDataAll.mat', 'posData', 'negData');

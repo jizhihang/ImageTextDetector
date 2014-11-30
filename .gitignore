@@ -8,6 +8,7 @@
 # Satwik
 ICDAR/
 MSRA-TD500/
+*.mat
 
 # Precompiled Headers
 *.gch
