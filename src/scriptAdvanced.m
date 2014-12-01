@@ -11,7 +11,7 @@ load('models.mat');
 
 % Load image.
 %image = imresize(imread('../ICDAR/img_23.jpg'), 0.25);
-image = imresize(imread('../MSRA-TD500/train/IMG_0030.JPG') , 0.25);
+image = imresize(imread('../MSRA-TD500/test/IMG_0059.JPG') , 0.25);
 
 % Get Stroke Width Transform.
 tic

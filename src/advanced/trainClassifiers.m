@@ -1,4 +1,4 @@
-function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath, noTrees)
+%function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath, noTrees)
     % This function trains classifiers for both components and chains
     %
     % Usage:
@@ -14,7 +14,7 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
     % componentModel = Random forest classifier for components
     % chainModel = Random forest classifier for chains
     
-    %trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
+    trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
     
     % Loading the dumped data for training
     load posData1; load posData2; load posData3;
@@ -183,6 +183,6 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
                     'Method', 'Classification');
     
     % Saving the models
-    save('modelsAll.mat', 'componentModel', 'chainModel');
-end
+    save('modelsAll.mat', 'componentModel', 'chainModel', '-v7.3');
+%end
 
