@@ -43,7 +43,7 @@ components = newComps;
 
 % Get chains using heirarchical clustering.
 tic
-[members, clusterImg] = clusterChains(compFeat, components);
+[members, ~] = clusterChains(compFeat, components);
 toc
 
 % Weeding out unecessarily using random forests
@@ -54,7 +54,7 @@ toc
 figure; imagesc(clusterImg);
 
 % Get tight bounding boxes.
-tightBBoxes = getTightBoundingBox(members, clusterImg, compFeat);
+tightBBoxes = getTightBoundingBox(members, components, compFeat);
 
 %% -------- Debug later ---------
 % Color the components.

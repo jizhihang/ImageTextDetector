@@ -1,4 +1,4 @@
-function bboxes = getTightBoundingBox(chains, clusterImg, compFeat)
+function bboxes = getTightBoundingBox(chains, components, compFeat)
     % Function to find the tightest bounding bounding boxes for each chain.
     % Details to be added later.
     
@@ -22,8 +22,18 @@ function bboxes = getTightBoundingBox(chains, clusterImg, compFeat)
         theta = atan(m);
         % Rotate the image to get the top left point and the height and
         % width.
-        cRotated = imrotate(clusterImg, -theta*180/pi);
-        [cX, cY] = find(clusterImg == cIdx);
+        cRotated = imrotate(components, -theta*180/pi);
+        
+        % Getting the co-ordinates of the points belonging to the current
+        % cluster by iterating over the components of cluster
+        cX = []; cY = [];
+        for compIdx = 1:length(chains{cIdx})
+            [memberX, memberY] = find(components == chains{cIdx}(compIdx)); 
+            cX = [cX; memberX]; 
+            cY = [cY; memberY];
+        end
+        %[cX, cY] = find(components == cIdx);
+        
         xMin = min(cX); xMax = max(cX);
         yMin = min(cY); yMax = max(cY);
         % Got everything.
