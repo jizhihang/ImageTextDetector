@@ -17,7 +17,11 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
     %trainingPath = '.'; noTrees = 200; imagePath = '../../MSRA-TD500/train';
     
     % Loading the dumped data for training
-    load(fullfile(trainingPath, 'trainingDataAll.mat'));
+    load posData1; load posData2; load posData3;
+    load negData1; load negData2; load negData3;
+    posData = [pos1Data pos2Data pos3Data];
+    negData = [neg1Data neg2Data neg3Data];
+    
     fprintf('Training data loaded\n');
     % First augment and create dataX and dataY
     % dataX = Feature vector (Nobs x Nfeats)
@@ -42,7 +46,7 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
     for i = 1:noChainsPos
         noCompsNeg = noCompsNeg + length(negData{i}.compFeat);
     end
-    
+    fprintf('Calculated component count\n');
     % 120 features for each component
     noCompFeatures = 120;
     XComponents = zeros(noCompsNeg + noCompsPos, noCompFeatures);
@@ -65,7 +69,7 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
             curCompId = curCompId + 1;
         end
     end
-    
+    fprintf('Acquired components 1\n');
     % Constructing the YComponents
     YComponents = ones(curCompId - 1, 1);
     
@@ -85,6 +89,7 @@ function [componentModel, chainModel] = trainClassifiers(trainingPath, imagePath
             curCompId = curCompId + 1;
         end
     end
+    fprintf('Acquired components');
     
     % Constructing the YComponents
     YComponents = [YComponents; zeros(curCompId - 1 -length(YComponents), 1)];
