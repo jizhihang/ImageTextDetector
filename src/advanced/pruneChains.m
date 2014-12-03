@@ -41,8 +41,6 @@ function[members, clusterImg] = pruneChains(image, components, members, compFeat
     
     % Visualizing the clusters
     clusterImg = zeros(size(components));
-    members{1}
-    members{2}
     for i = 1:length(members)
         for j = 1:length(members{i})
             clusterImg(components == members{i}(j))  = i;
