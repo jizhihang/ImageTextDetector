@@ -37,6 +37,6 @@ function bboxes = getTightBoundingBox(chains, components, compFeat)
         xMin = min(cX); xMax = max(cX);
         yMin = min(cY); yMax = max(cY);
         % Got everything.
-        bboxes(cIdx, 1:end) = [xMin, yMin, xMax-xMin, yMax-yMin, theta];
+        bboxes(cIdx, 1:end) = [xMin, yMin, xMax-xMin, yMax-yMin, -theta];
     end
 end

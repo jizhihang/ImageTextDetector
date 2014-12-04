@@ -27,6 +27,7 @@ toc
 tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
+figure; imagesc(components);
 
 % Eliminating components based on the random tree model and features
 [newComps, bboxes, compProbs, compFeat] = pruneComponents(image, swtImg, components, bboxes, componentModel);
@@ -63,7 +64,6 @@ cornerPen = vision.MarkerInserter('Shape','Circle', ...
 rotCorners = {};
 drawImage = image;
 for j = 1:size(tightBBoxes, 1)
-    fprintf('Drawing a new box; (%d, %d)\n', size(drawImage, 1), size(drawImage,2));
     bbox = tightBBoxes(j, :);
     rotCorner = round(rotateCannonicalBox(tightBBoxes(j, :)));
 
@@ -74,8 +74,6 @@ for j = 1:size(tightBBoxes, 1)
 	drawImage = drawLine(drawImage, rotCorner(4, :), rotCorner(1, :), [255,0,0]);
 
 	rotCorners{j} = rotCorner;
-    
-    drawImage = step(cornerPen, drawImage, uint32(rotCorners{j}));
 end
 figure; imshow(drawImage)
 %rotCorners
