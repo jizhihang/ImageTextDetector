@@ -6,7 +6,7 @@ function [ corners ] = rotateCannonicalBox( cannonBox )
     % corners = rotateCannonicalBox(cannonBox);
     %
     % Input :
-    % CanonBox = Canonical box
+    % CannonBox = Cannonical box
     % 
     % Output:
     % corners = Four corners of the rotated box
@@ -23,10 +23,9 @@ function [ corners ] = rotateCannonicalBox( cannonBox )
     shifts = 0.5 * cannonBox(3:4);
     
     % Getting four corners of the rotated box
-    corners = [[1, 1] .* shifts; [-1, 1] .* shifts; ...
-               [-1 -1] .* shifts; [1 -1].*shifts];  
+    corners = [[-1, 1] .* shifts; [1, 1] .* shifts; ...
+               [1 -1] .* shifts; [-1 -1].*shifts];  
 
     % Rotating the corners and translate to the center
     corners = bsxfun(@plus, (R * corners')',  centerPt);
 end
-
