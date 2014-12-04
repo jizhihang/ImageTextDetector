@@ -54,10 +54,9 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
 		
 		% Need the three parameters to lie within a particular range for
         % accepting it as a component.
-        if ( widthVariation <= 10 && ...
-             aspectRatio >= 0.1 && aspectRatio <= 1 && ...
+        if ( widthVariation <= 1 && ...
+             aspectRatio >= 0.1 && aspectRatio <= 10 && ...
              occupationRatio >= 0.1 )
-         
             % Storing the bounding boxes for further processing
             compInfo = [compInfo; rowMin rowMax colMin colMax];
             textComponents(compMembers) = noComps + 1;
@@ -93,9 +92,9 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
 
         %Debugging
         %fprintf('Containments : %d \n', noContainments);
-        % If there are containments, ignore the current component
-        if(noContainments > 2)
-            textComponents(textComponents == i) = 0;
+        %If there are containments, ignore the current component
+        if(noContainments > 5)
+           textComponents(textComponents == i) = 0;
         end
     end
 
