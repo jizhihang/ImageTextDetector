@@ -28,6 +28,8 @@ tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
 
+figure; imagesc([components, rawComponents]);
+
 % Eliminating components based on the random tree model and features
 [newComps, bboxes, compProbs, compFeat] = pruneComponents(image, swtImg, components, bboxes, componentModel);
 
