@@ -21,7 +21,12 @@ function drawImage = drawLine(drawImage, p1, p2, color)
 
 	% Get the indices from bresenham line
 	[xIdx, yIdx] = bresenhamLine(p1, angle, max_dist);
-
+	
+	% t = find((xIdx > 0).*(xIdx < m));
+	% xIdx = xIdx(t); yIdx = yIdx(t);
+	% t = find((yIdx > 0).*(yIdx < n));
+	% xIdx = xIdx(t); yIdx = yIdx(t);
+	
 	if c == 1
 		% Get the linear indices.
 		lineIdx = sub2ind(size(drawImage), xIdx(1, :), yIdx(1, :));

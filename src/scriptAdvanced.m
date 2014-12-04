@@ -11,29 +11,49 @@ load('models.mat');
 
 % Load image.
 %image = imresize(imread('../ICDAR/img_23.jpg'), 0.25);
-image = imresize(imread('../MSRA-TD500/test/IMG_0059.JPG'), 0.5);
+image = imresize(imread('../MSRA-TD500/test/IMG_1869.JPG'), 0.4);
 
 % Get Stroke Width Transform.
 tic
 swtImg = swtransform(image, false);
-toc
 
 % Get connected components.
 tic
-rawComponents = connectedComponents(swtImg, 3);
+rawComponents = connectedComponents(swtImg, 3.1);
 toc
 
 % Filter the components using heuristics.
 tic
 [components, bboxes] = filterComponents(swtImg, rawComponents);
 toc
-figure; imagesc(components);
-
 figure; imagesc([components, rawComponents]);
 
+% Draw component bounding boxes.
+compImage = image;
+for idx=1:1:length(unique(components))-1
+	compImage = drawRect(compImage, bboxes(idx, :), [255, 0, 0]);
+end
+figure; imshow(compImage);
 % Eliminating components based on the random tree model and features
 [newComps, bboxes, compProbs, compFeat] = pruneComponents(image, swtImg, components, bboxes, componentModel);
 
+% View the component characteristics.
+charImage = image;
+compImage = image;
+for idx = 1:1:length(unique(newComps))
+	[xidx, yidx] = find(newComps == idx);
+	if isempty(xidx)
+		continue;
+	end
+	xmin = min(xidx); ymin = min(yidx);
+	xmax = max(xidx); ymax = max(yidx);
+	bbox = [xmin xmax ymin ymax];
+	compImage = drawRect(compImage, bbox, [255, 0, 0]);
+	compSWT = swtImg(xmin:xmax, ymin:ymax);
+	compChars = getComponentCharacteristics(compSWT, bbox);
+	charImage = drawComponentCharacteristics(charImage, compChars);
+end
+figure; imshow(compImage);
 % Debugging
 %figure; imagesc(components)
 %figure; imagesc(newComps)
@@ -49,10 +69,39 @@ tic
 [members, ~] = clusterChains(compFeat, components);
 toc
 
+% Draw chain boxes.
+chainImg = image;
+for mIdx = 1:numel(members)
+	chain = members{mIdx}
+	rIdx = []; cIdx = [];
+	for idx = chain
+		[r, c] = find(components == idx);
+		rIdx = [rIdx r']; cIdx = [cIdx c'];
+	end
+	rMin = min(rIdx); rMax = max(rIdx);
+	cMin = min(cIdx); cMax = max(cIdx);
+	chainImg = drawRect(chainImg, [rMin rMax cMin cMax], [255, 0, 0]);
+end
+figure; imshow(chainImg);
+
 % Weeding out unecessarily using random forests
 tic
 [members, clusterImg] = pruneChains(image, components, members, compFeat,...
                             compProbs, chainModel);
+chainImg = image;
+for mIdx = 1:numel(members)
+	chain = members{mIdx}
+	rIdx = []; cIdx = [];
+	for idx = chain
+		[r, c] = find(components == idx);
+		rIdx = [rIdx r']; cIdx = [cIdx c'];
+	end
+	rMin = min(rIdx); rMax = max(rIdx);
+	cMin = min(cIdx); cMax = max(cIdx);
+	chainImg = drawRect(chainImg, [rMin rMax cMin cMax], [255, 0, 0]);
+end
+figure; imshow(chainImg);
+
 toc
 figure; imagesc(clusterImg);
 

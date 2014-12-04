@@ -36,8 +36,10 @@ function [ drawImage ] = drawComponentCharacteristics(image, characteristics)
     
     % For each channel draw
     color = [255, 0, 0]; % Red
-    
     for i = 1:length(xPts)
+		if xPts(i) == 0 || yPts(i) == 0
+			continue;
+		end
         drawImage(yPts(i), xPts(i), :) = color;
     end
 end

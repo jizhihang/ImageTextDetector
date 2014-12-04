@@ -13,14 +13,6 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
     % textComponents - Components that most likely correspond to text regions
     % componentBBoxes - Bounding boxes containing the components
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Set of parameters that can be tuned for better performance
-    varianceMeanRatio = 0.7; % Discard if variance > varianceMeanRatio * mean
-    maxAspectRatio = 10.0; % Discard if aspect ratio is not between (1/maxAspectRatio, maxAspectRatio)
-    diameterStrokeRatio = 10.0; % Discard if diameter is greater than diameterStrokeRatio * mean
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
     %% Primary level classifier.
     % Number of components in the original segmentation
     maxCompId = max(components(:));
@@ -54,7 +46,7 @@ function[textComponents, componentBboxes] = filterComponents(strokeWidthImg, com
 		
 		% Need the three parameters to lie within a particular range for
         % accepting it as a component.
-        if ( widthVariation <= 1 && ...
+        if ( widthVariation <= 0.9 && ...
              aspectRatio >= 0.1 && aspectRatio <= 10 && ...
              occupationRatio >= 0.1 )
             % Storing the bounding boxes for further processing

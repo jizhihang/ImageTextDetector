@@ -44,6 +44,7 @@ function [components, bboxes, compProbs, compFeat] = pruneComponents(...
     notComponents = find(Ytest == 0);
     for i = 1:length(notComponents)
         components(components == notComponents(i)) = 0;
+		fprintf('Pruning component %d', i);
     end
     
     % Clean components, bboxes, compFeatures
