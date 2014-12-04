@@ -11,11 +11,11 @@ load('models.mat');
 
 % Load image.
 %image = imresize(imread('../ICDAR/img_23.jpg'), 0.25);
-image = imresize(imread('../MSRA-TD500/test/IMG_0059.JPG') , 0.25);
+image = imresize(imread('../MSRA-TD500/train/IMG_0155.JPG') , 0.5);
 
 % Get Stroke Width Transform.
 tic
-swtImg = swtransform(image, false);
+swtImg = swtransform(image, true);
 toc
 
 % Get connected components.
@@ -56,6 +56,20 @@ figure; imagesc(clusterImg);
 % Get tight bounding boxes.
 tightBBoxes = getTightBoundingBox(members, components, compFeat);
 
+cornerPen = vision.MarkerInserter('Shape','Circle', ...
+               'BorderColor','Custom','CustomBorderColor',uint8([0 255 0]));
+
+% Rotating them to get rotated points
+rotCorners = {};
+drawImage = image;
+for j = 1:size(tightBBoxes, 1)
+    rotCorners{j} = rotateCannonicalBox(tightBBoxes(j, :));
+    drawImage = step(cornerPen, drawImage, uint32(rotCorners{j}));
+end
+figure; imshow(drawImage)
+%rotCorners
+
+   
 %% -------- Debug later ---------
 % Color the components.
 %color_idx = 1;
