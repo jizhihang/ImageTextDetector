@@ -6,7 +6,7 @@ function [ corners ] = rotateCannonicalBox( cannonBox )
     % corners = rotateCannonicalBox(cannonBox);
     %
     % Input :
-    % CannonBox = Cannonical box
+    % CanonBox = Canonical box
     % 
     % Output:
     % corners = Four corners of the rotated box

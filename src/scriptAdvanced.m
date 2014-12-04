@@ -11,7 +11,7 @@ load('models.mat');
 
 % Load image.
 %image = imresize(imread('../ICDAR/img_23.jpg'), 0.25);
-image = imresize(imread('../MSRA-TD500/train/IMG_0155.JPG') , 0.5);
+image = imresize(imread('../MSRA-TD500/train/IMG_0155.JPG'), 1.0);
 
 % Get Stroke Width Transform.
 tic
@@ -63,8 +63,13 @@ cornerPen = vision.MarkerInserter('Shape','Circle', ...
 rotCorners = {};
 drawImage = image;
 for j = 1:size(tightBBoxes, 1)
+    fprintf('Drawing a new box; (%d, %d)\n', size(drawImage, 1), size(drawImage,2));
+    bbox = tightBBoxes(j, :);
     rotCorners{j} = rotateCannonicalBox(tightBBoxes(j, :));
-    drawImage = step(cornerPen, drawImage, uint32(rotCorners{j}));
+
+	% Draw the rectangle:
+    
+    %drawImage = step(cornerPen, drawImage, uint32(rotCorners{j}));
 end
 figure; imshow(drawImage)
 %rotCorners

@@ -1,4 +1,4 @@
-function [ drawImg ] = drawRotatedBox(image, box)
+function [ drawImg ] = drawRotatedBox(image, corners)
     % Function draws bounding box of any orientation
     % Using bresenham and figures out the co-ordinates
     %
