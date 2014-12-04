@@ -11,11 +11,11 @@ load('models.mat');
 
 % Load image.
 %image = imresize(imread('../ICDAR/img_23.jpg'), 0.25);
-image = imresize(imread('../MSRA-TD500/train/IMG_0155.JPG'), 1.0);
+image = imresize(imread('../MSRA-TD500/test/IMG_0059.JPG'), 0.5);
 
 % Get Stroke Width Transform.
 tic
-swtImg = swtransform(image, true);
+swtImg = swtransform(image, false);
 toc
 
 % Get connected components.
@@ -65,11 +65,17 @@ drawImage = image;
 for j = 1:size(tightBBoxes, 1)
     fprintf('Drawing a new box; (%d, %d)\n', size(drawImage, 1), size(drawImage,2));
     bbox = tightBBoxes(j, :);
-    rotCorners{j} = rotateCannonicalBox(tightBBoxes(j, :));
+    rotCorner = round(rotateCannonicalBox(tightBBoxes(j, :)));
 
-	% Draw the rectangle:
+	% Draw the rectangle
+	drawImage = drawLine(drawImage, rotCorner(1, :), rotCorner(2, :), [255,0,0]);
+	drawImage = drawLine(drawImage, rotCorner(2, :), rotCorner(3, :), [255,0,0]);
+	drawImage = drawLine(drawImage, rotCorner(3, :), rotCorner(4, :), [255,0,0]);
+	drawImage = drawLine(drawImage, rotCorner(4, :), rotCorner(1, :), [255,0,0]);
+
+	rotCorners{j} = rotCorner;
     
-    %drawImage = step(cornerPen, drawImage, uint32(rotCorners{j}));
+    drawImage = step(cornerPen, drawImage, uint32(rotCorners{j}));
 end
 figure; imshow(drawImage)
 %rotCorners
