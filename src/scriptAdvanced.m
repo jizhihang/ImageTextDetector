@@ -16,6 +16,7 @@ image = imresize(imread('../MSRA-TD500/test/IMG_1869.JPG'), 0.4);
 % Get Stroke Width Transform.
 tic
 swtImg = swtransform(image, false);
+imwrite(uint8(swtImg*255.0/max(swtImg(:))), 'swt_image.png');
 
 % Get connected components.
 tic
@@ -34,6 +35,8 @@ for idx=1:1:length(unique(components))-1
 	compImage = drawRect(compImage, bboxes(idx, :), [255, 0, 0]);
 end
 figure; imshow(compImage);
+imwrite(compImage, 'raw_components.png');
+
 % Eliminating components based on the random tree model and features
 [newComps, bboxes, compProbs, compFeat] = pruneComponents(image, swtImg, components, bboxes, componentModel);
 
@@ -54,6 +57,8 @@ for idx = 1:1:length(unique(newComps))
 	charImage = drawComponentCharacteristics(charImage, compChars);
 end
 figure; imshow(compImage);
+imwrite(compImage, 'pruned_components.png');
+
 % Debugging
 %figure; imagesc(components)
 %figure; imagesc(newComps)
@@ -83,12 +88,13 @@ for mIdx = 1:numel(members)
 	chainImg = drawRect(chainImg, [rMin rMax cMin cMax], [255, 0, 0]);
 end
 figure; imshow(chainImg);
-
+imwrite(chainImg, 'initial_chains.png');
 % Weeding out unecessarily using random forests
 tic
 [members, clusterImg] = pruneChains(image, components, members, compFeat,...
                             compProbs, chainModel);
 chainImg = image;
+mask = zeros(size(components));
 for mIdx = 1:numel(members)
 	chain = members{mIdx}
 	rIdx = []; cIdx = [];
@@ -98,54 +104,67 @@ for mIdx = 1:numel(members)
 	end
 	rMin = min(rIdx); rMax = max(rIdx);
 	cMin = min(cIdx); cMax = max(cIdx);
+	mask(rMin:rMax, cMin:cMax) = 1;
 	chainImg = drawRect(chainImg, [rMin rMax cMin cMax], [255, 0, 0]);
 end
 figure; imshow(chainImg);
+imwrite(chainImg, 'pruned_chains.png');
+
+% Run OCR.
+maskedImg = uint8(double(rgb2gray(image)).*mask);
+bwThres = graythresh(maskedImg);
+bwImg = im2bw(maskedImg, bwThres);
+ocrOutput = ocr(bwImg);
+ocrImg = insertObjectAnnotation(image, 'rectangle', ocrOutput.WordBoundingBoxes, ocrOutput.Words);
+ocrOutputMask = ocrOutput;
+bwImgMask = bwImg;
+
+imwrite(ocrImg, 'ocr_output_masked.png');
+
+% Try vanilla for comparison
+bwThres = graythresh(image);
+bwImg = im2bw(image, bwThres);
+ocrOutput = ocr(bwImg);
+ocrImg = insertObjectAnnotation(image, 'rectangle', ocrOutput.WordBoundingBoxes, ocrOutput.Words);
+ocrOutputVanilla = ocrOutput;
+
+imwrite(ocrImg, 'ocr_output_vanilla.png');
 
 toc
 figure; imagesc(clusterImg);
 
-% Get tight bounding boxes.
-tightBBoxes = getTightBoundingBox(members, components, compFeat);
-
-cornerPen = vision.MarkerInserter('Shape','Circle', ...
-               'BorderColor','Custom','CustomBorderColor',uint8([0 255 0]));
-
-% Rotating them to get rotated points
-rotCorners = {};
 drawImage = image;
-for j = 1:size(tightBBoxes, 1)
-    bbox = tightBBoxes(j, :);
-    rotCorner = round(rotateCannonicalBox(tightBBoxes(j, :)));
-
-	% Draw the rectangle
-	drawImage = drawLine(drawImage, rotCorner(1, :), rotCorner(2, :), [255,0,0]);
-	drawImage = drawLine(drawImage, rotCorner(2, :), rotCorner(3, :), [255,0,0]);
-	drawImage = drawLine(drawImage, rotCorner(3, :), rotCorner(4, :), [255,0,0]);
-	drawImage = drawLine(drawImage, rotCorner(4, :), rotCorner(1, :), [255,0,0]);
-
-	rotCorners{j} = rotCorner;
+boxInserter = vision.ShapeInserter('Shape', 'Polygons', 'Fill', true, 'FillColor', 'White');
+tightBBoxes = getTightBoundingBox(members, clusterImg, compFeat);
+ocrImg = chainImg;
+for mIdx = 1:numel(members)
+	chain = members{mIdx}
+	rIdx = []; cIdx = [];
+	for idx = chain
+		[r, c] = find(components == idx);
+		rIdx = [rIdx r']; cIdx = [cIdx c'];
+	end
+	bbox = round(minBoundingBox([rIdx; cIdx]));
+	mask = zeros(size(components));
+	mask = step(boxInserter, mask, reshape(bbox([2 1], :), 1, 8));
+	mask(mask ~= 0) = 1;
+	maskedIm = image.*uint8(mask(:,:, [1 1 1]));
+	angle = tightBBoxes(mIdx, 5);
+	maskedIm = imrotate(maskedIm, -angle*180/pi, 'bilinear', 'crop');
+	bwThres = graythresh(maskedIm);
+	bwImg = im2bw(maskedIm, bwThres);
+	ocrOutput = ocr(1 - bwImg);
+	cString = '';
+	for idx = 1:numel(ocrOutput.Words)
+		cString = [cString ocrOutput.Words{idx} ' '];
+	end
+	fprintf('Detected string is %s\n', cString);
+	ocrImg = insertText(ocrImg, [min(cIdx), min(rIdx)], cString);
+	drawImage = drawLine(drawImage, bbox(:,1)', bbox(:,2)', [255,0,0]);
+	drawImage = drawLine(drawImage, bbox(:,2)', bbox(:,3)', [255,0,0]);
+	drawImage = drawLine(drawImage, bbox(:,3)', bbox(:,4)', [255,0,0]);
+	drawImage = drawLine(drawImage, bbox(:,4)', bbox(:,1)', [255,0,0]);
 end
-figure; imshow(drawImage)
-%rotCorners
 
-   
-%% -------- Debug later ---------
-% Color the components.
-%color_idx = 1;
-%chained_components = zeros(size(components));
-%drawComponents = components;
-%for idx=1:1:size(chains,1)
-%   chain = chains{idx};
-%   for cnum=chain
-%       chained_components(components == cnum) = color_idx;
-%   end
-%   [x, y] = find(chained_components == color_idx);
-%   xmin = min(x); xmax = max(x);
-%   ymin = min(y); ymax = max(y);
-%   drawComponents = drawRect(drawComponents, [xmin xmax ymin ymax], 10);
-%   signImg = drawRect(signImg, [xmin xmax ymin ymax], [255, 0, 0]);
-%   color_idx = color_idx + 1;
-%end
-%figure; imagesc(drawComponents);
-%figure; imshow(signImg);
+figure; imshow(drawImage)
+imwrite(drawImage, 'final_image.png');
