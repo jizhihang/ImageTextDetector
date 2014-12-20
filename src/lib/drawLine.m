@@ -38,6 +38,10 @@ function drawImage = drawLine(drawImage, p1, p2, color)
 		imG = drawImage(:,:,2);
 		imB = drawImage(:,:,3);
 
+        size(imR)
+        xIdx(1, :)
+        yIdx(1, :)
+        
 		lineIdx = sub2ind(size(imR), xIdx(1, :), yIdx(1,:));
 
 		imR(lineIdx) = color(1);
