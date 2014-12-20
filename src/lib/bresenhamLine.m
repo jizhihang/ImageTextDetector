@@ -23,11 +23,11 @@ function [x_indices, y_indices] = bresenhamLine(starting_point, angle, max_dist)
     if abs(slope) < 1
         % Unique x indices.
         %Generating the line with start point as origin and later shifting the entire segment
-        x_extreme = round(cos(angle) * max_dist);
+        x_extreme = ceil(cos(angle) * max_dist);
         if(x_extreme > 0)
-            x_indices = 0:1:round(cos(angle)*max_dist);
+            x_indices = 0:1:ceil(cos(angle)*max_dist);
         else
-            x_indices = 0:-1:round(cos(angle)*max_dist);
+            x_indices = 0:-1:ceil(cos(angle)*max_dist);
         end
             
         %x_indices = starting_point(1):1:round(cos(angle)*max_dist);
@@ -38,28 +38,28 @@ function [x_indices, y_indices] = bresenhamLine(starting_point, angle, max_dist)
         %y_indices = starting_point(2) + slope*(x_indices - starting_point(1));
         
         % Find the nearest integer pixel. Simple use the round function.
-        y_indices = round(y_indices);        
+        y_indices = ceil(y_indices);        
     else
         % Unique y indices.
         %Generating the line with start point as origin and later shifting the entire segment
-        y_extreme = round(sin(angle) * max_dist);
+        y_extreme = ceil(sin(angle) * max_dist);
         if(y_extreme > 0)
-            y_indices = 0:1:round(sin(angle)*max_dist);
+            y_indices = 0:1:ceil(sin(angle)*max_dist);
         else
-            y_indices = 0:-1:round(sin(angle)*max_dist);
+            y_indices = 0:-1:ceil(sin(angle)*max_dist);
         end
-        %y_indices = starting_point(2):1:round(sin(angle)*max_dist);
+         %y_indices = starting_point(2):1:round(sin(angle)*max_dist);
         
         % Line equation: (y-y1) = m*(x-x1) => x = x1 + (1/m)*(y-y1)
         % For origin : x = 1/m * y
         x_indices = (1/slope) * y_indices;
         
         % Find the nearest integer pixel. Simple use the round function.
-        x_indices = round(x_indices);        
+        x_indices = ceil(x_indices);        
     end
     % Now mirror the indices to generate the required line centered at origin
     %y_indices = [-y_indices(end-1:-1:1), y_indices];
     %x_indices = [-x_indices(end-1:-1:1), x_indices];
-    y_indices = starting_point(2) + [y_indices; -y_indices];
-    x_indices = starting_point(1) + [x_indices; -x_indices];
+    y_indices = ceil(starting_point(2)) + [y_indices; -y_indices];
+    x_indices = ceil(starting_point(1)) + [x_indices; -x_indices];
 end
